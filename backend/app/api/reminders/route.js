@@ -16,7 +16,17 @@ export const runtime = 'nodejs';
 // Create a get route to retrieve all profiles //
 export async function GET(req) {
     try {
-    const reminders = await Reminders.findAll();
+    const { searchParams } = new URL(req.url);
+    const subListId = searchParams.get('subListId');
+    
+    const queryOptions = {};
+    
+    // Filter by subListId if provided
+    if (subListId) {
+      queryOptions.where = { subListId };
+    }
+    
+    const reminders = await Reminders.findAll(queryOptions);
 
     return NextResponse.json(reminders, {status:200});
     } catch (err) {

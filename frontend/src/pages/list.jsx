@@ -27,6 +27,7 @@ export default function List () {
     const navigate = useNavigate();
     const routesByKey = SideNavRoutes;
     const { xxl } = useResponsive();
+    const [folderForm] = Form.useForm();
 
 
 
@@ -140,6 +141,20 @@ export default function List () {
         }
      }
 
+     const onFinishCreateFolder = async (values) => {
+      setErr("");
+      try {
+        const data = await createFolderApi({ name: values.name });
+    
+        setFolder(current => [...current, data]);
+    
+        folderForm.resetFields();   // ✅ reset inputs
+        setIsModalOpen(false);      // ✅ close modal
+      } catch (error) {
+        setErr(error?.response?.data?.error || "failed creating folder");
+      }
+    };
+
         // Data render function //
      function buildMenuItems(folders, subList) {
       return folders.map(folder => ({
@@ -200,47 +215,61 @@ export default function List () {
 
 <Modal
   open={isModalOpen}
-  onOk={handleOk}
+  footer={null}
   onCancel={handleCancel}
 >
   {modalType === 'folder' && <div>
     <Form
     name="basic"
+    form={folderForm}
     labelCol={{ span: 8 }}
     wrapperCol={{ span: 16 }}
     style={{ maxWidth: 600 }}
     initialValues={{ remember: true }}
-    onFinish={onFinish}
+    onFinish={onFinishCreateFolder}
     onFinishFailed={onFinishFailed}
+    layout="vertical"
     autoComplete="off"
   >
     <Form.Item
       label="Folder Name"
-      name="folder name"
+     name="name"
       rules={[{ required: true, message: 'Please input the name!' }]}
     >
       <Input />
     </Form.Item>
+    <Form.Item>
+  <Button type="primary" htmlType="submit">
+    Create Folder
+  </Button>
+</Form.Item>
     </Form>
     </div>}
   {modalType === 'list' && <div>
     <Form
     name="basic"
+    form={folderForm}
     labelCol={{ span: 8 }}
     wrapperCol={{ span: 16 }}
     style={{ maxWidth: 600 }}
     initialValues={{ remember: true }}
     onFinish={onFinish}
     onFinishFailed={onFinishFailed}
+    layout="vertical"
     autoComplete="off"
   >
     <Form.Item
       label="List Name"
-      name="list name"
+      name="name"
       rules={[{ required: true, message: 'Please input the name!' }]}
     >
       <Input />
     </Form.Item>
+    <Form.Item>
+  <Button type="primary" htmlType="submit">
+    Create List
+  </Button>
+</Form.Item>
     </Form>
     </div>}
 </Modal>

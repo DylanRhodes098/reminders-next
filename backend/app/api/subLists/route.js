@@ -18,8 +18,18 @@ export async function GET(req) {
     try {
     const { searchParams } = new URL(req.url);
     const folderId = searchParams.get('folderId');
+    const id = searchParams.get('id');
     
     const queryOptions = {};
+    
+    // If id is provided, get single subList by id
+    if (id) {
+      const subList = await SubLists.findByPk(id);
+      if (!subList) {
+        return NextResponse.json({ error: "SubList not found" }, { status: 404 });
+      }
+      return NextResponse.json(subList, {status:200});
+    }
     
     // Filter by folderId if provided
     if (folderId) {

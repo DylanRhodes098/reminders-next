@@ -1,7 +1,7 @@
 import api from "../api";
 
 export async function listReminders(subListId) {
-    const { data } = await api.get(`/sublists/${subListId}/reminders`);
+    const { data } = await api.get(`/reminders?subListId=${subListId}`);
     return data;
   }
   

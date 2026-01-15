@@ -95,7 +95,9 @@ export default function Reminders () {
 
   // Data render function //
      function buildReminderItems(reminders) {
-      return reminders.map(reminder => ({
+      // Ensure reminders is an array
+      const remindersArray = Array.isArray(reminders) ? reminders : [];
+      return remindersArray.map(reminder => ({
         key: reminder.id,
         label: reminder.note,
       }));
@@ -104,18 +106,40 @@ export default function Reminders () {
      // Other //
      useEffect(() => {
       async function fetchData() {
-        const subListData = await getSubListById(subListId);
-        setSubList(subListData);
-    
-        const remindersData = await listReminders(subListId);
-        setReminders(remindersData);
+        if (!subListId) return;
+        
+        setErr("");
+        try {
+          const subListData = await getSubListById(subListId);
+          console.log("SUBLIST DATA:", subListData);
+          setSubList(subListData);
+      
+          const remindersData = await listReminders(subListId);
+          console.log("REMINDERS DATA:", remindersData);
+          // Ensure data is an array
+          const remindersArray = Array.isArray(remindersData) ? remindersData : [];
+          setReminders(remindersArray);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          setErr(error?.response?.data?.error || "Failed to load data");
+          setSubList(null);
+          setReminders([]);
+        }
       }
     
-      if (subListId) fetchData();
+      fetchData();
     }, [subListId]);
 
 
-  if (err) return <p>{err}</p>;
+  // Show error if exists
+  if (err) {
+    return (
+      <div className="">
+        <h1 className="mb-4 font-bold text-xl">Error</h1>
+        <p style={{ color: "crimson" }}>{err}</p>
+      </div>
+    );
+  }
 
 
      function warningMessage () {

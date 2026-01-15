@@ -10,8 +10,7 @@ export async function createSubList (payload) {
     return data;
     }
     
-    export async function getSubListById(subListId) {
-        const { data } = await api.get(`/subLists/${subListId}`);
+    export async function getSubListById(id) {
+        const { data } = await api.get(`/subLists?id=${id}`);
         return data;
-
-    }
+      }
