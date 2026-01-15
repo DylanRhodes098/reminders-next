@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 // Backend imports //
 import { listReminders } from "../services/reminders";
 import { createReminders } from "../services/reminders";
+import { getSubListById } from "../services/subList";
 
 // UI Components //
 import { DatePicker, Button, Dropdown, Space, Modal, Card, Menu, Checkbox, Form, Input, ConfigProvider, Flex} from 'antd';
@@ -32,6 +33,7 @@ export default function Reminders () {
     const [form, setForm] = useState(""); 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null);
+    const [subList, setSubList] = useState(null);
 
 
 
@@ -65,6 +67,16 @@ export default function Reminders () {
 
   // onClick Functions //
 
+  const onClick = (e) => {
+    console.log('click ', e);
+
+    const path = routesByKey[e.key];
+
+    if (path) {
+      window.location.href = path; // 👈 navigate
+    }
+  };
+
   const onClickAdd = (e) => {
     console.log('click ', e);
 
@@ -91,12 +103,15 @@ export default function Reminders () {
 
      // Other //
      useEffect(() => {
-      async function fetchReminders() {
-        const data = await listReminders(subListId);
-        setReminders(data);
+      async function fetchData() {
+        const subListData = await getSubListById(subListId);
+        setSubList(subListData);
+    
+        const remindersData = await listReminders(subListId);
+        setReminders(remindersData);
       }
     
-      if (subListId) fetchReminders();
+      if (subListId) fetchData();
     }, [subListId]);
 
 
@@ -114,7 +129,9 @@ export default function Reminders () {
      return (
         <>
         <div className=""> 
-        <h1 className="mb-4 font-bold text-xl">NAME OF SUBLIST</h1>
+        <h1 className="mb-4 font-bold text-xl">
+        {subList ? subList.name : "Loading..."}
+        </h1>
         <Menu
     className=""
       onClick={onClick}
