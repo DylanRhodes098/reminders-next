@@ -14,7 +14,7 @@ export default function App() {
 
       <Route path="/" element={<Layout />}>
         <Route index element={<List />} />
-        <Route path="sublists/:subListId" element={<Reminders />} />
+        <Route path="sublist/:subListId" element={<Reminders />} />
       </Route>
     </Routes>
   );
