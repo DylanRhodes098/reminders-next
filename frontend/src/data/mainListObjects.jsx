@@ -1,12 +1,4 @@
-export const SideNavData = [
-  {
-    key: 'home',
-    label: '',
-    type: 'group',
-    children: [
-      { key: 'home', label: 'Home', path: "" },
-    ],
-  },
+export const MainListData = [
   {
     type: 'divider',
   },
@@ -38,5 +30,4 @@ export const SideNavData = [
 
 export const SideNavRoutes = {
   'home': '/',           // Home
-  
 };

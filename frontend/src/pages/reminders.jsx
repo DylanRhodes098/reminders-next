@@ -3,33 +3,30 @@ import {Link, useNavigate} from "react-router-dom";
 import React from 'react';
 
 // Backend imports //
-import { listList } from "../services/list";
-import { createList } from "../services/list";
-import { listFolder } from "../services/folder";
-import { createFolder as createFolderApi } from "../services/folder";
+import { listReminders } from "../services/reminders";
+import { createReminders } from "../services/reminders";
 
 // UI Components //
-import { Button, Dropdown, Space, Modal, Card, Menu, Checkbox, Form, Input, ConfigProvider, Flex} from 'antd';
+import { DatePicker, Button, Dropdown, Space, Modal, Card, Menu, Checkbox, Form, Input, ConfigProvider, Flex} from 'antd';
 import { useResponsive } from 'antd-style';
 
 // Data imports`//
-import { SideNavRoutes, MainListData} from '../data/mainListObjects';
 import "../styles/SideNav.css";
-import { MainListDropDown } from "../data/mainListDropDown";
+import { RemindersData } from "../data/remindersObject";
+import { RemindersDropDown } from "../data/remindersDropDown";
 
-export default function List () {
-
-
+export default function Reminders () {
 
     // GlobalUses //
     const navigate = useNavigate();
-    const routesByKey = SideNavRoutes;
     const { xxl } = useResponsive();
+    const { RangePicker } = DatePicker;
+    const { TextArea } = Input;
 
     // UseStates //
     const [err, setErr] = useState("");
     const [folder, setFolder] = useState([]);
-    const [list, setList] = useState([]); 
+    const [reminders, setReminders] = useState([]); 
     const [form, setForm] = useState(""); 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null);
@@ -89,47 +86,20 @@ export default function List () {
 
   // Backend Functions //
 
-     async function retrieveList () {
+     async function retrieveReminders () {
         setErr("");
         try {
-            const data = await listList();
-            setList (data);
+            const data = await listReminders();
+            setReminders (data);
         } catch (error) {
             setErr(error?.response?.data?.error || "failed retriveing" );
         }
      }
 
-     async function retrieveFolder () {
-        setErr("");
-        try{
-            const data = await listFolder();
-            // Folder data should populate the `folder` state, not `list`
-            setFolder(data);
-        } catch (error) {
-            setErr(error?.response?.data?.error || "failed retrieving folders");
-        }
-     }
-
-     async function handleCreateFolder(e, name) {
-        e.preventDefault();
-        setErr("");
-        try {
-            const payload = { name };
-            const data = await createFolderApi(payload);
-            // Append the new folder to the existing folder list
-            setFolder(current => [...current, data]);
-        } catch (error) {
-            setErr(error?.response?.data?.error || "failed creating folder");
-        }
-     }
-
-
-
      // Other //
      useEffect (() => {
         (async () => {
-            await retrieveList();
-            await retrieveFolder();
+            await retrieveReminders();
         })(); 
     }, []);
 
@@ -145,7 +115,7 @@ export default function List () {
      return (
         <>
         <div className=""> 
-        <h1 className="mb-4 font-bold text-xl">List</h1>
+        <h1 className="mb-4 font-bold text-xl">NAME OF SUBLIST</h1>
         <Menu
     className=""
       onClick={onClick}
@@ -153,11 +123,11 @@ export default function List () {
       defaultSelectedKeys={['1']}
       defaultOpenKeys={['sub1']}
       mode="inline"
-      items={MainListData}
+      items={RemindersData}
     />
    <Dropdown
   menu={{
-    items: MainListDropDown,
+    items: RemindersDropDown,
     onClick: handleMenuClick,
   }}
 >
@@ -171,7 +141,7 @@ export default function List () {
   onOk={handleOk}
   onCancel={handleCancel}
 >
-  {modalType === 'folder' && <div>
+  {modalType === 'reminder' && <div>
     <Form
     name="basic"
     labelCol={{ span: 8 }}
@@ -181,34 +151,18 @@ export default function List () {
     onFinish={onFinish}
     onFinishFailed={onFinishFailed}
     autoComplete="off"
+    layout="vertical"
   >
     <Form.Item
-      label="Folder Name"
-      name="folder name"
-      rules={[{ required: true, message: 'Please input the name!' }]}
+      label="Reminder"
+      name="reminder"
+      rules={[{ required: true, message: 'Please input the reminder!' }]}
     >
-      <Input />
+        <TextArea rows={4} />
     </Form.Item>
-    </Form>
-    </div>}
-  {modalType === 'list' && <div>
-    <Form
-    name="basic"
-    labelCol={{ span: 8 }}
-    wrapperCol={{ span: 16 }}
-    style={{ maxWidth: 600 }}
-    initialValues={{ remember: true }}
-    onFinish={onFinish}
-    onFinishFailed={onFinishFailed}
-    autoComplete="off"
-  >
-    <Form.Item
-      label="List Name"
-      name="list name"
-      rules={[{ required: true, message: 'Please input the name!' }]}
-    >
-      <Input />
-    </Form.Item>
+    <Form.Item label="Date">
+          <DatePicker />
+        </Form.Item>
     </Form>
     </div>}
 </Modal>

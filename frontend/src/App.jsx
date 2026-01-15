@@ -4,6 +4,7 @@ import Register from './pages/register';
 import Login from './pages/login';
 import List from './pages/list';
 import Layout from './components/layout';
+import Reminders from './pages/reminders'
 
 export default function App() {
   return (
@@ -15,6 +16,8 @@ export default function App() {
   
         <Route path="/" element={<Layout />}>
           <Route index element={<List />} />
+          <Route path="/reminders" element ={<Reminders />} />
+
         </Route>
         </Routes>
       </>
