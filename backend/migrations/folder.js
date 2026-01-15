@@ -18,7 +18,7 @@ await queryInterface.createTable('folder', {
   },
  
    // foreign key
-   subListId: {
+   userId: {
     type: Sequelize.UUID,
     allowNull: false,
   },

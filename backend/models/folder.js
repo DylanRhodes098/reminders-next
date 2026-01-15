@@ -28,7 +28,7 @@ Folder.init ({
   },
 
   // foreign key
-  subListId: {
+  userId: {
     type: DataTypes.UUID,
     allowNull: false,
     validate: {

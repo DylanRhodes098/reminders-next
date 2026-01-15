@@ -37,15 +37,6 @@ Reminders.init ({
   },
 
   // foreign key
-  folderId: {
-    type: DataTypes.UUID,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-      isUUID: 4,
-    },
-  },
-
   subListId: {
     type: DataTypes.UUID,
     allowNull: false,

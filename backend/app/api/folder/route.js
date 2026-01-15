@@ -9,6 +9,7 @@ import { folderCreate } from "../../../validation/folder";
 // Import model files //
 
 import Folder from "../../../models/folder";
+import SubLists from "../../../models/subLists";
 
 // Define node runtime //
 export const runtime = 'nodejs';
@@ -16,7 +17,21 @@ export const runtime = 'nodejs';
 // Create a get route to retrieve all profiles //
 export async function GET(req) {
     try {
-    const folders = await Folder.findAll();
+    const { searchParams } = new URL(req.url);
+    const include = searchParams.get('include');
+    
+    const queryOptions = {};
+    
+    // Include sublists if requested
+    if (include === 'subLists') {
+      queryOptions.include = [{
+        model: SubLists,
+        as: 'subLists',
+        attributes: ['id', 'name', 'folderId', 'createdAt', 'updatedAt']
+      }];
+    }
+    
+    const folders = await Folder.findAll(queryOptions);
 
     return NextResponse.json(folders, {status:200});
     } catch (err) {

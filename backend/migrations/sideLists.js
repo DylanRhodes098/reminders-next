@@ -4,7 +4,7 @@
 export async function up(queryInterface, Sequelize) {
 
 // Define queryinterface method //
-await queryInterface.createTable('subLists', {
+await queryInterface.createTable('sublists', {
 // Add data //
  id: {
     type: Sequelize.DataTypes.UUID,
@@ -18,7 +18,7 @@ await queryInterface.createTable('subLists', {
   },
  
    // foreign key
-   remindersId: {
+   folderId: {
     type: Sequelize.UUID,
     allowNull: false,
   },
@@ -40,4 +40,4 @@ await queryInterface.createTable('subLists', {
 export async function down(queryInterface, Sequelize) {
 
     // Define queryinterface method //
-    await queryInterface.dropTable('subLists')};
+    await queryInterface.dropTable('sublists')};

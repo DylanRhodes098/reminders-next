@@ -7,7 +7,6 @@ export async function up(queryInterface, Sequelize) {
       note: 'Stand-up meeting',
       date_of_reminder: new Date(Date.now() + 60 * 60 * 1000), // 1 hour from now
       subListId: '55555555-5555-5555-5555-555555555555',
-      folderId: '1',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -16,7 +15,6 @@ export async function up(queryInterface, Sequelize) {
       note: 'Gym session',
       date_of_reminder: new Date(Date.now() + 24 * 60 * 60 * 1000), // tomorrow
       subListId: '66666666-6666-6666-6666-666666666666',
-      folderId: '2',
       createdAt: new Date(),
       updatedAt: new Date(),
     },

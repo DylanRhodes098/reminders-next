@@ -16,7 +16,17 @@ export const runtime = 'nodejs';
 // Create a get route to retrieve all profiles //
 export async function GET(req) {
     try {
-    const subLists = await SubLists.findAll();
+    const { searchParams } = new URL(req.url);
+    const folderId = searchParams.get('folderId');
+    
+    const queryOptions = {};
+    
+    // Filter by folderId if provided
+    if (folderId) {
+      queryOptions.where = { folderId };
+    }
+    
+    const subLists = await SubLists.findAll(queryOptions);
 
     return NextResponse.json(subLists, {status:200});
     } catch (err) {

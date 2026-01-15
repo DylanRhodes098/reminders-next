@@ -14,21 +14,21 @@ import Reminders from "./reminders.js";
 console.log("[models] registered:", Object.keys(sequelize.models));
 
 // Create hasmany relationships //
-if (!User.associations?.folder) 
+if (!User.associations?.folders) 
     User.hasMany(Folder, {
-    foreignKey: 'usersFolder',
-    as: 'folder'
+    foreignKey: 'userId',
+    as: 'folders'
 });
 
 if (!Folder.associations?.subLists) 
     Folder.hasMany(SubLists, {
-    foreignKey: 'SubLists',
+    foreignKey: 'folderId',
     as: 'subLists'
 });
 
 if (!SubLists.associations?.reminders) 
     SubLists.hasMany(Reminders, {
-    foreignKey: 'Reminders',
+    foreignKey: 'subListId',
     as: 'reminders'
 });
 
@@ -36,21 +36,21 @@ if (!SubLists.associations?.reminders)
 // Create belongsto relationships //
 if (!Folder.associations?.user)
     Folder.belongsTo(User, {
-      foreignKey: 'usersFolder',
+      foreignKey: 'userId',
       as: 'user',
     });
   
   // SubLists belongs to Folder
   if (!SubLists.associations?.folder)
     SubLists.belongsTo(Folder, {
-      foreignKey: 'SubLists',
+      foreignKey: 'folderId',
       as: 'folder',
     });
   
   // Reminders belongs to SubLists
   if (!Reminders.associations?.subList)
     Reminders.belongsTo(SubLists, {
-      foreignKey: 'Reminders',
+      foreignKey: 'subListId',
       as: 'subList',
     });
 

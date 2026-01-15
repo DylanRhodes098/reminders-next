@@ -5,16 +5,16 @@ export async function up(queryInterface, Sequelize) {
     {
       id: '11111111-1111-1111-1111-111111111111',
       name: 'Work',
+      userId: 'd6f5d3b0-12ab-4c9f-bbbb-1234567890ab',
       createdAt: new Date(),
       updatedAt: new Date(),
-      subListId: '33333333-3333-3333-3333-333333333333'
     },
     {
       id: '22222222-2222-2222-2222-222222222222',
       name: 'Personal',
+      userId: 'd6f5d3b0-12ab-4c9f-bbbb-1234567890ab',
       createdAt: new Date(),
       updatedAt: new Date(),
-      subListId: '33333333-3333-3333-3333-333333333332'
     },
   ]);
 }

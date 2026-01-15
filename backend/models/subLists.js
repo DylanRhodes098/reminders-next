@@ -28,7 +28,7 @@ SubLists.init ({
   },
 
   // foreign key
-  remindersId: {
+  folderId: {
     type: DataTypes.UUID,
     allowNull: false,
     validate: {
@@ -51,7 +51,7 @@ SubLists.init ({
           {
             sequelize,
             modelName: "SubLists",
-            tableName: "SubLists",
+            tableName: "sublists",
             freezeTableName: true,
             timestamps: true,
             underscored: false,

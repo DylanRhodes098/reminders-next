@@ -22,10 +22,6 @@ await queryInterface.createTable('reminders', {
   },
 
    // foreign key
-   folderId: {
-    type: Sequelize.UUID,
-    allowNull: false,
-  },
   subListId: {
     type: Sequelize.UUID,
     allowNull: false,
