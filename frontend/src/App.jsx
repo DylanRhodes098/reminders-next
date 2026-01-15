@@ -1,25 +1,21 @@
 import React from 'react';
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Register from './pages/register';
 import Login from './pages/login';
 import List from './pages/list';
 import Layout from './components/layout';
-import Reminders from './pages/reminders'
+import Reminders from './pages/reminders';
 
 export default function App() {
   return (
-      <>
-    
-      <Routes>
-        <Route path="/register" element={<Register/>} /> 
-        <Route path="/login" element={<Login/>} />
-  
-        <Route path="/" element={<Layout />}>
-          <Route index element={<List />} />
-          <Route path="/reminders" element ={<Reminders />} />
+    <Routes>
+      <Route path="/register" element={<Register />} /> 
+      <Route path="/login" element={<Login />} />
 
-        </Route>
-        </Routes>
-      </>
-    );
-  };
+      <Route path="/" element={<Layout />}>
+        <Route index element={<List />} />
+        <Route path="sublists/:subListId" element={<Reminders />} />
+      </Route>
+    </Routes>
+  );
+}

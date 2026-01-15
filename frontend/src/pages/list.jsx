@@ -5,6 +5,8 @@ import React from 'react';
 // Backend imports //
 import { listList } from "../services/list";
 import { createList } from "../services/list";
+import { listSubList } from "../services/subList";
+import { createSubList } from "../services/subList";
 import { listFolder } from "../services/folder";
 import { createFolder as createFolderApi } from "../services/folder";
 
@@ -26,13 +28,17 @@ export default function List () {
     const routesByKey = SideNavRoutes;
     const { xxl } = useResponsive();
 
+
+
     // UseStates //
     const [err, setErr] = useState("");
     const [folder, setFolder] = useState([]);
     const [list, setList] = useState([]); 
+    const [subList, setSubList] = useState([]); 
     const [form, setForm] = useState(""); 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null);
+    const [menuItems, setMenuItems] = useState([]);
 
 
 
@@ -88,7 +94,6 @@ export default function List () {
 
 
   // Backend Functions //
-
      async function retrieveList () {
         setErr("");
         try {
@@ -103,12 +108,24 @@ export default function List () {
         setErr("");
         try{
             const data = await listFolder();
+            console.log("FOLDER API RESPONSE:", data);
             // Folder data should populate the `folder` state, not `list`
             setFolder(data);
         } catch (error) {
             setErr(error?.response?.data?.error || "failed retrieving folders");
         }
      }
+
+     async function retrieveSubList () {
+      setErr("");
+      try{
+          const data = await listSubList();
+          // Folder data should populate the `folder` state, not `list`
+          setSubList(data);
+      } catch (error) {
+          setErr(error?.response?.data?.error || "failed retrieving folders");
+      }
+   }
 
      async function handleCreateFolder(e, name) {
         e.preventDefault();
@@ -123,13 +140,28 @@ export default function List () {
         }
      }
 
+        // Data render function //
+     function buildMenuItems(folders, subList) {
+      return folders.map(folder => ({
+        key: folder.id,
+        label: folder.name,
 
+        children: subList
+          .filter(sub => sub.folderId === folder.id)
+          .map(sub => ({
+            key: sub.id,
+            label: sub.name,
+            onClick: () => navigate(`/sublist/${sub.id}`),
+          })),
+      }));
+    }
 
      // Other //
      useEffect (() => {
         (async () => {
             await retrieveList();
             await retrieveFolder();
+            await retrieveSubList();
         })(); 
     }, []);
 
@@ -153,7 +185,7 @@ export default function List () {
       defaultSelectedKeys={['1']}
       defaultOpenKeys={['sub1']}
       mode="inline"
-      items={MainListData}
+      items={buildMenuItems(folder, subList, navigate)}
     />
    <Dropdown
   menu={{

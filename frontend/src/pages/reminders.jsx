@@ -1,6 +1,7 @@
 import {useState, useEffect} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import React from 'react';
+import { useParams } from "react-router-dom";
 
 // Backend imports //
 import { listReminders } from "../services/reminders";
@@ -20,6 +21,7 @@ export default function Reminders () {
     // GlobalUses //
     const navigate = useNavigate();
     const { xxl } = useResponsive();
+    const { subListId } = useParams();
     const { RangePicker } = DatePicker;
     const { TextArea } = Input;
 
@@ -62,15 +64,6 @@ export default function Reminders () {
 
 
   // onClick Functions //
-  const onClick = (e) => {
-    console.log('click ', e);
-
-    const path = routesByKey[e.key];
-
-    if (path) {
-      window.location.href = path; // 👈 navigate
-    }
-  };
 
   const onClickAdd = (e) => {
     console.log('click ', e);
@@ -85,23 +78,29 @@ export default function Reminders () {
 
 
   // Backend Functions //
+  
 
-     async function retrieveReminders () {
-        setErr("");
-        try {
-            const data = await listReminders();
-            setReminders (data);
-        } catch (error) {
-            setErr(error?.response?.data?.error || "failed retriveing" );
-        }
-     }
+
+  // Data render function //
+     function buildReminderItems(reminders) {
+      return reminders.map(reminder => ({
+        key: reminder.id,
+        label: reminder.note,
+      }));
+    }
 
      // Other //
-     useEffect (() => {
-        (async () => {
-            await retrieveReminders();
-        })(); 
-    }, []);
+     useEffect(() => {
+      async function fetchReminders() {
+        const data = await listReminders(subListId);
+        setReminders(data);
+      }
+    
+      if (subListId) fetchReminders();
+    }, [subListId]);
+
+
+  if (err) return <p>{err}</p>;
 
 
      function warningMessage () {
@@ -123,7 +122,7 @@ export default function Reminders () {
       defaultSelectedKeys={['1']}
       defaultOpenKeys={['sub1']}
       mode="inline"
-      items={RemindersData}
+      items={buildReminderItems(reminders)}
     />
    <Dropdown
   menu={{
