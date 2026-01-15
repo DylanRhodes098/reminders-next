@@ -9,9 +9,7 @@ export default function Layout () {
         <>
         <div>
     <TopNav/>
-     <main className="flex flex-row p-4">
-            <div className="pr-[4%]">
-      </div>
+     <main className="px-12 py-12">
       <Outlet />
       </main>
     <Footer></Footer>

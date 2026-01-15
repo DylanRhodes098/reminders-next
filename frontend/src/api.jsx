@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+// Prefer env var, but fall back to local Next backend in dev
+const baseURL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:3000/api";
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || ""
+  baseURL,
 });
 
 api.interceptors.request.use((config) => {

@@ -2,8 +2,8 @@ import {useState, useEffect} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import { listList } from "../services/list";
 import { createList } from "../services/list";
-import { listFolder} from "../services/folder";
-import { createFolder } from "../services/folder";
+import { listFolder } from "../services/folder";
+import { createFolder as createFolderApi } from "../services/folder";
 
 import React from 'react';
 import { Card, Space } from 'antd';
@@ -29,21 +29,24 @@ export default function List () {
         setErr("");
         try{
             const data = await listFolder();
-            setList(data);
+            // Folder data should populate the `folder` state, not `list`
+            setFolder(data);
         } catch (error) {
-            setErr(error?.response?.data?.error || "failed retriveing")
+            setErr(error?.response?.data?.error || "failed retrieving folders");
         }
      }
 
-     async function createFolder (e) {
-        e.preventDefualt();
+     // Create a folder helper (not currently wired to UI)
+     async function handleCreateFolder(e, name) {
+        e.preventDefault();
         setErr("");
         try {
-            const payload = {name};
-            const data = await createFolder(payload);
-            setProfile(currentList => [...currentList, data]);
+            const payload = { name };
+            const data = await createFolderApi(payload);
+            // Append the new folder to the existing folder list
+            setFolder(current => [...current, data]);
         } catch (error) {
-            setErr(error?.response?.data?.error || "failed creating");
+            setErr(error?.response?.data?.error || "failed creating folder");
         }
      }
 
@@ -66,14 +69,15 @@ export default function List () {
      return (
         <>
         <div className=""> 
-        <Space direction="vertical" size={16}>
-    <Card title="Folder" extra={<a href="#">More</a>} style={{ }}>
+        <h1 className="font-bold text-xl">List</h1>
+        <Space className="w-full" orientation="vertical" size={16}>
+    <Card title="List" extra={<a href="#">More</a>} style={{ }}>
     {warningMessage()}
             <ul className="mt-4">
                 {Array.isArray(folder) && folder.length > 0 ? (
-                    folder.map((g) => (
-                        <div key={g.id}>
-                        <li className="text-lg">Folder:{g.name}</li>
+                    folder.map((f) => (
+                        <div key={f.id}>
+                        <li className="text-lg">Folder:{f.name}</li>
                         </div>
                     ))
                 ) : (

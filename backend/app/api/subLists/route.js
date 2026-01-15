@@ -3,7 +3,7 @@
 
 // Import tools //
 import { NextResponse } from "next/server";
-import { profileCreate } from "../../../validation/profile";
+import { subListsCreate } from "../../../validation/subList";
 
 
 // Import model files //
@@ -34,15 +34,15 @@ export async function GET(req) {
 export async function POST(req) {
     try {
     const body = await req.json();
-    const parsed = foldersCreate.safeParse(body);
+    const parsed = subListsCreate.safeParse(body);
 
     if (!parsed.success) {
         return NextResponse.json({ error: "Missing fields", message: parsed.error.format() }, { status: 400 });
       }
          
-      const createSubList = await SubLists.create(parsed.data);
+      const createSubLists = await SubLists.create(parsed.data);
         
-        return NextResponse.json(createSubList, { status: 200 });
+        return NextResponse.json(createSubLists, { status: 200 });
 
     } catch (err) {
         const msg =

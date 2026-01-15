@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const reminderCreate = z.object({
+export const remindersCreate = z.object({
   note: z.string().min(1, "Note required"),
   date_of_reminder: z.coerce.date().refine(
     (d) => d > new Date(),
@@ -9,11 +9,11 @@ export const reminderCreate = z.object({
   subListId: z.string().uuid(),
 });
 
-export const reminderUpdate = reminderCreate
+export const remindersUpdate = remindersCreate
   .partial()
   .omit({ subListId: true });
 
-export const reminderUpdateWithId = reminderUpdate
+export const remindersUpdateWithId = remindersUpdate
   .extend({ id: z.string().uuid() })
   .refine((d) => {
     if (d.note !== undefined) return true;
@@ -21,16 +21,16 @@ export const reminderUpdateWithId = reminderUpdate
     return false;
   }, { message: "No fields to update" });
 
-export const reminderDelete = z.object({
+export const remindersDelete = z.object({
   id: z.string().uuid(),
 });
 
-export const optionalReminderDelete = reminderDelete.partial();
+export const optionalRemindersDelete = remindersDelete.partial();
 
 export default {
-  reminderCreate,
-  reminderUpdate,
-  reminderUpdateWithId,
-  reminderDelete,
-  optionalReminderDelete,
+  remindersCreate,
+  remindersUpdate,
+  remindersUpdateWithId,
+  remindersDelete,
+  optionalRemindersDelete,
 };

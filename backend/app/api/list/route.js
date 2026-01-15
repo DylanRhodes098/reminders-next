@@ -3,7 +3,7 @@
 
 // Import tools //
 import { NextResponse } from "next/server";
-import { profileCreate } from "../../../validation/profile";
+import { listCreate } from "../../../validation/list";
 
 
 // Import model files //
