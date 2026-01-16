@@ -1,0 +1,21 @@
+/* Delete icon hover styling */
+.delete-icon {
+    color: black;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.delete-icon:hover {
+  color: #1890ff !important;
+}
+
+/* Plus icon styling - default black, blue on hover */
+.plus-icon {
+  color: #000;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.plus-icon:hover {
+  color: #1890ff !important;
+}

@@ -13,13 +13,14 @@ import { listFolder, deleteFolder } from "../services/folder";
 import { createFolder as createFolderApi } from "../services/folder";
 
 // - - -  UI Components - - - //
-import { Button, Dropdown, Space, Modal, Card, Menu, Checkbox, Form, Input, ConfigProvider, Flex} from 'antd';
+import { Button, Dropdown, Space, Modal, Card, Menu, Checkbox, Form, Input, ConfigProvider, Flex, Divider} from 'antd';
 import { useResponsive } from 'antd-style';
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 
 // - - -  Data imports - - - //
 import { SideNavRoutes } from '../data/mainListObjects';
 import "../styles/SideNav.css";
+import "../styles/listStyle.css";
 
 
 
@@ -226,7 +227,7 @@ export default function List () {
                   e.stopPropagation();
                   handleDeleteSubList(sub.id);
                 }}
-                className="cursor-pointer transition-colors duration-200 hover:text-[#1890ff]"
+                className="delete-icon"
                 style={{ color: "#ff4d4f" }}
               />
             </div>
@@ -236,7 +237,7 @@ export default function List () {
         // Add "+ Add sublist" trigger button below the last sublist
         ...(isCreating ? [] : [{
           key: `add-sublist-${folder.id}`,
-          label: (<PlusCircleOutlined className="text-black cursor-pointer transition-colors duration-200 hover:text-[#1890ff]" />),
+          label: (<PlusCircleOutlined className="plus-icon" />),
           onClick: ({ domEvent }) => {
             if (domEvent) {
               domEvent.stopPropagation();
@@ -306,7 +307,7 @@ export default function List () {
                 e.stopPropagation();
                 handleDeleteFolder(folder.id);
               }}
-              className="cursor-pointer transition-colors duration-200 hover:text-[#1890ff]"
+              className="delete-icon"
             />
           </div>
         ),
@@ -498,6 +499,7 @@ export default function List () {
         <>
         <div className=""> 
         <h1 className="mb-4 font-bold text-xl">List</h1>
+        <Divider />
         <Menu
     className=""
       key={`menu-${creatingSubListForFolder || 'none'}`}
@@ -546,9 +548,9 @@ export default function List () {
     />
 
 <PlusCircleOutlined
-  style={{ fontSize: 22, marginTop: 24 }}
+  style={{ marginTop: 24 }}
   onClick={handleCreateFolderClick}
-  className="text-black cursor-pointer transition-colors duration-200 hover:text-[#1890ff] hover:bg-gray-100 rounded-md p-2"
+  className="plus-icon hover:bg-gray-100 rounded-md p-2"
 />
 
 
@@ -608,11 +610,11 @@ export default function List () {
   <Button type="primary" htmlType="submit">
     Create List
   </Button>
-  <DeleteOutlined className="cursor-pointer transition-colors duration-200 hover:text-[#1890ff]" />
+  <DeleteOutlined className="delete-icon" />
 </Form.Item>
     </Form>
     </div>}
-    <DeleteOutlined className="cursor-pointer transition-colors duration-200 hover:text-[#1890ff]" />
+    <DeleteOutlined className="delete-icon" />
 </Modal>
    
                 </div>

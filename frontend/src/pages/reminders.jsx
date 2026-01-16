@@ -1,22 +1,25 @@
 // - - -  React imports - - - //
-import {useState, useEffect} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import React from 'react';
 import { useParams } from "react-router-dom";
 
 // - - -  Backend imports - - - //
-import { listReminders } from "../services/reminders";
-import { createReminders } from "../services/reminders";
+import  { listReminders, createReminders, deleteReminders } from "../services/reminders";
 import { getSubListById } from "../services/subList";
+import { listReminderFolder, createReminderFolder,deleteReminderFolder } from "../services/reminderFolder";
 
 // - - -  UI Components - - - //
 import { DatePicker, Button, Dropdown, Space, Modal, Card, Menu, Checkbox, Form, Input, ConfigProvider, Flex} from 'antd';
 import { useResponsive } from 'antd-style';
+import { PlusCircleOutlined, DeleteOutlined } from "@ant-design/icons";
 
 // - - -  Data imports - - - //
 import "../styles/SideNav.css";
-import { RemindersData } from "../data/remindersObject";
+import "../styles/listStyle.css";
 import { RemindersDropDown } from "../data/remindersDropDown";
+
+
 
 export default function Reminders () {
 
@@ -49,6 +52,13 @@ export default function Reminders () {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null);
     const [subList, setSubList] = useState(null); 
+    const [reminderFolders, setReminderFolders] = useState([]);
+    const [creatingFolder, setCreatingFolder] = useState(false);
+    const [newFolderName, setNewFolderName] = useState("");
+    const [creatingReminderForFolder, setCreatingReminderForFolder] = useState(null);
+    const [newReminderText, setNewReminderText] = useState("");
+    const [openKeys, setOpenKeys] = useState([]);
+    const enterPressedRef = useRef(false);
 
 
     // - - -  Modal - - - //

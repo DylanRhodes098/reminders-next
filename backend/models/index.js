@@ -8,6 +8,7 @@ import User from "./user.js";
 import List from "./list.js";
 import Folder from "./folder.js";
 import SubLists from "./subLists.js";
+import ReminderFolder from "./reminderFolder.js";
 import Reminders from "./reminders.js";
 
 
@@ -32,6 +33,18 @@ if (!SubLists.associations?.reminders)
     as: 'reminders'
 });
 
+if (!User.associations?.reminderFolders) 
+    User.hasMany(ReminderFolder, {
+    foreignKey: 'userId',
+    as: 'reminderFolders'
+});
+
+if (!SubLists.associations?.reminderFolders) 
+    SubLists.hasMany(ReminderFolder, {
+    foreignKey: 'subListId',
+    as: 'reminderFolders'
+});
+
 
 // Create belongsto relationships //
 if (!Folder.associations?.user)
@@ -54,4 +67,18 @@ if (!Folder.associations?.user)
       as: 'subList',
     });
 
-      export { User, Folder, List, SubLists, Reminders };
+  // ReminderFolder belongs to User
+  if (!ReminderFolder.associations?.user)
+    ReminderFolder.belongsTo(User, {
+      foreignKey: 'userId',
+      as: 'user',
+    });
+
+  // ReminderFolder belongs to SubLists
+  if (!ReminderFolder.associations?.subList)
+    ReminderFolder.belongsTo(SubLists, {
+      foreignKey: 'subListId',
+      as: 'subList',
+    });
+
+      export { User, Folder, List, SubLists, Reminders, ReminderFolder };
