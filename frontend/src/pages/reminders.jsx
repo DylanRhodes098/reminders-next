@@ -1,43 +1,57 @@
+// - - -  React imports - - - //
 import {useState, useEffect} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import React from 'react';
 import { useParams } from "react-router-dom";
 
-// Backend imports //
+// - - -  Backend imports - - - //
 import { listReminders } from "../services/reminders";
 import { createReminders } from "../services/reminders";
 import { getSubListById } from "../services/subList";
 
-// UI Components //
+// - - -  UI Components - - - //
 import { DatePicker, Button, Dropdown, Space, Modal, Card, Menu, Checkbox, Form, Input, ConfigProvider, Flex} from 'antd';
 import { useResponsive } from 'antd-style';
 
-// Data imports`//
+// - - -  Data imports - - - //
 import "../styles/SideNav.css";
 import { RemindersData } from "../data/remindersObject";
 import { RemindersDropDown } from "../data/remindersDropDown";
 
 export default function Reminders () {
 
-    // GlobalUses //
+    // - - -  GlobalUses - - - //
     const navigate = useNavigate();
     const { xxl } = useResponsive();
     const { subListId } = useParams();
-    const { RangePicker } = DatePicker;
-    const { TextArea } = Input;
+    // <- useParams reads the current URL, allowing you to identify what data should be displayed. 
 
-    // UseStates //
+    // <- Example =  if (!subListId) return; setErr("");
+
+    // <- try { const subListData = await getSubListById(subListId); setSubList(subListData); } 
+
+    // <- catch (error) { setErr(error?.response?.data?.error || "Failed to load data"); setSubList(null); }. 
+    
+    const { RangePicker } = DatePicker;
+    // <- Ants DatePicker Component 
+
+    // <- Example = </Form.Item> <Form.Item label="Date"> <DatePicker /> </Form.Item>. 
+
+    const { TextArea } = Input;
+    // <- Ants Input Component. 
+
+    // <- Example = <TextArea rows={4} />. 
+
+
+    // - - -  UseStates - - - //
     const [err, setErr] = useState("");
-    const [folder, setFolder] = useState([]);
     const [reminders, setReminders] = useState([]); 
-    const [form, setForm] = useState(""); 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null);
-    const [subList, setSubList] = useState(null);
+    const [subList, setSubList] = useState(null); 
 
 
-
-    // Modal //
+    // - - -  Modal - - - //
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -55,7 +69,7 @@ export default function Reminders () {
 
 
 
-  // Form //
+  // - - -  Form - - - //
   const onFinish = values => {
     console.log('Success:', values);
   };
@@ -65,37 +79,22 @@ export default function Reminders () {
 
 
 
-  // onClick Functions //
-
+  // - - -  onClick Functions - - - //
   const onClick = (e) => {
     console.log('click ', e);
 
     const path = routesByKey[e.key];
 
     if (path) {
-      window.location.href = path; // 👈 navigate
+      navigate(path); // 👈 navigate
     }
   };
 
-  const onClickAdd = (e) => {
-    console.log('click ', e);
+  // - - -  Backend Functions - - - //
 
-    const path = routesByKey[e.key];
-
-    if (path) {
-      window.location.href = path; // 👈 navigate
-    }
-  };
-
-
-
-  // Backend Functions //
-  
-
-
-  // Data render function //
+  // GET Data //
      function buildReminderItems(reminders) {
-      // Ensure reminders is an array
+
       const remindersArray = Array.isArray(reminders) ? reminders : [];
       return remindersArray.map(reminder => ({
         key: reminder.id,
@@ -111,14 +110,14 @@ export default function Reminders () {
         setErr("");
         try {
           const subListData = await getSubListById(subListId);
-          console.log("SUBLIST DATA:", subListData);
+       
           setSubList(subListData);
       
           const remindersData = await listReminders(subListId);
-          console.log("REMINDERS DATA:", remindersData);
-          // Ensure data is an array
+         
           const remindersArray = Array.isArray(remindersData) ? remindersData : [];
           setReminders(remindersArray);
+
         } catch (error) {
           console.error("Error fetching data:", error);
           setErr(error?.response?.data?.error || "Failed to load data");
@@ -130,8 +129,6 @@ export default function Reminders () {
       fetchData();
     }, [subListId]);
 
-
-  // Show error if exists
   if (err) {
     return (
       <div className="">
@@ -142,14 +139,7 @@ export default function Reminders () {
   }
 
 
-     function warningMessage () {
-        if (!err) {
-            return null;
-        } else {
-            return <p style={{ color: "crimson" }}>{err}</p>
-        }
-     }
-
+  
      return (
         <>
         <div className=""> 

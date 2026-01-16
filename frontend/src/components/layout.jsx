@@ -7,9 +7,9 @@ export default function Layout () {
     
     return (
         <>
-        <div>
+        <div className="min-h-screen flex flex-col">
     <TopNav/>
-     <main className="px-12 py-12">
+     <main className="flex-grow px-12 py-12">
       <Outlet />
       </main>
     <Footer></Footer>
