@@ -10,7 +10,7 @@ export default function TopNav () {
         <>
         <div className="topNavWrapper p-4 flex flex-row start">
           
-        <p className="text-white">Reminders</p>
+        <p className="text-black">Reminders</p>
 
         </div>
         </>

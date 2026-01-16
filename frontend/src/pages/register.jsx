@@ -139,7 +139,10 @@ export default function Register() {
           Register
         </Button>
       </Form>
-
+      <p className="text-sm text-gray-500">
+  Password must be at least 8 characters and include
+  an uppercase letter, a lowercase letter, and a number.
+</p>
       <p className="">
         Have an account?{" "}
         <Link to="/login" className="">

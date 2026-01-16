@@ -1,5 +1,7 @@
 .topNavWrapper {
-  background-color: #3e7158;
+  background-color: whit; 
+  border-color: blue;
+  border-width: 0.5px;
 }
 
 .searchBar {

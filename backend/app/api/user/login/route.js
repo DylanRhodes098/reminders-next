@@ -3,7 +3,7 @@
 // Import tools //
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { signToken } from "@/lib/auth";
+import { signToken } from "../../../../lib/auth";
 
 // Import model files //
 
@@ -22,7 +22,11 @@ export async function POST(req) {
 const user = await User.findOne({ where: { email: String(email).trim().toLowerCase() },
   });
 
-  const ok = user && await bcrypt.compare(password, user.password)
+  if (!user) {
+    return NextResponse.json({ error: "incorrect info" }, { status: 400 });
+  }
+
+  const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
     return NextResponse.json({ error: "incorrect info" }, { status: 400 });
   }

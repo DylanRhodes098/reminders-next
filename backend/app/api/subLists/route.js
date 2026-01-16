@@ -54,10 +54,17 @@ export async function GET(req) {
 export async function POST(req) {
     try {
     const body = await req.json();
+    console.log("Received sublist creation request:", body);
     const parsed = subListsCreate.safeParse(body);
 
     if (!parsed.success) {
-        return NextResponse.json({ error: "Missing fields", message: parsed.error.format() }, { status: 400 });
+        console.error("Validation failed:", parsed.error.format());
+        console.error("Validation errors:", parsed.error.errors);
+        return NextResponse.json({ 
+          error: "Validation failed", 
+          message: parsed.error.format(),
+          details: parsed.error.errors 
+        }, { status: 400 });
       }
          
       const createSubLists = await SubLists.create(parsed.data);
@@ -65,11 +72,12 @@ export async function POST(req) {
         return NextResponse.json(createSubLists, { status: 200 });
 
     } catch (err) {
+        console.error("Error creating sublist:", err);
         const msg =
         process.env.NODE_ENV === "development"
           ? err.parent?.sqlMessage || err.message
           : "Error retrieving";
-        return NextResponse.json(msg, { error: "failed creating" }, { status: 400 });
+        return NextResponse.json({ error: "failed creating", message: msg }, { status: 400 });
     }
 }
 

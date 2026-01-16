@@ -229,7 +229,7 @@ export default function List () {
           key: `create-${folder.id}`,
           label: (
             <Input 
-              placeholder="Borderless" 
+              placeholder="New" 
               bordered={false}
               value={newSubListName}
               onChange={(e) => setNewSubListName(e.target.value)}
@@ -296,18 +296,32 @@ export default function List () {
         handleCancelSubList();
         return;
       }
+      if (!folderId) {
+        setErr("Folder ID is missing");
+        handleCancelSubList();
+        return;
+      }
       try {
-        const data = await createSubList({ 
+        const payload = { 
           name: newSubListName.trim(), 
           folderId: folderId 
-        });
+        };
+        console.log("Creating sublist with payload:", payload);
+        const data = await createSubList(payload);
     
         setSubList(current => [...current, data]);
         setCreatingSubListForFolder(null);
         setNewSubListName("");
         enterPressedRef.current = false;
       } catch (error) {
-        setErr(error?.response?.data?.error || "failed creating sublist");
+        console.error("Error creating sublist:", error);
+        console.error("Error response:", error?.response?.data);
+        const errorMessage = error?.response?.data?.error || error?.response?.data?.message || "failed creating sublist";
+        const validationDetails = error?.response?.data?.details || error?.response?.data?.message;
+        if (validationDetails) {
+          console.error("Validation details:", validationDetails);
+        }
+        setErr(errorMessage);
         enterPressedRef.current = false;
       }
     };
