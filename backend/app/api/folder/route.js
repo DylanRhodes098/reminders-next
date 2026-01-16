@@ -3,7 +3,7 @@
 
 // Import tools //
 import { NextResponse } from "next/server";
-import { folderCreate, folderUpdate } from "../../../validation/folder";
+import { folderCreate, folderUpdate, folderDelete } from "../../../validation/folder";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../../../lib/db.js";
 
@@ -137,6 +137,65 @@ export async function PUT(req) {
       return NextResponse.json(
         { error: "failed updating", message: msg },
         { status: 400 }
+      );
+    }
+  }
+
+  export async function DELETE(req) {
+    try {
+      const { searchParams } = new URL(req.url);
+      const id = searchParams.get("id");
+  
+      // Validate input
+      const parsed = folderDelete.safeParse({ id });
+  
+      if (!parsed.success) {
+        return NextResponse.json(
+          {
+            error: "Validation failed",
+            details: parsed.error.format(),
+          },
+          { status: 400 }
+        );
+      }
+  
+      // Check folder exists
+      const folder = await Folder.findByPk(parsed.data.id);
+  
+      if (!folder) {
+        return NextResponse.json(
+          { error: "Folder not found" },
+          { status: 404 }
+        );
+      }
+  
+      /**
+       * IMPORTANT:
+       * Delete child sublists first to avoid foreign key constraint errors
+       */
+      await SubLists.destroy({
+        where: { folderId: parsed.data.id },
+      });
+  
+      // Delete folder
+      await folder.destroy();
+  
+      return NextResponse.json(
+        { message: "Folder deleted successfully" },
+        { status: 200 }
+      );
+  
+    } catch (err) {
+      console.error("Error deleting folder:", err);
+  
+      const msg =
+        process.env.NODE_ENV === "development"
+          ? err?.parent?.sqlMessage || err?.message
+          : "Error deleting folder";
+  
+      return NextResponse.json(
+        { error: "Failed deleting folder", message: msg },
+        { status: 500 }
       );
     }
   }

@@ -7,19 +7,21 @@ import React from 'react';
 // - - -  Backend imports - - - //
 import { listList } from "../services/list";
 import { createList } from "../services/list";
-import { listSubList } from "../services/subList";
+import { listSubList, deleteSubList } from "../services/subList";
 import { createSubList } from "../services/subList";
-import { listFolder } from "../services/folder";
+import { listFolder, deleteFolder } from "../services/folder";
 import { createFolder as createFolderApi } from "../services/folder";
 
 // - - -  UI Components - - - //
 import { Button, Dropdown, Space, Modal, Card, Menu, Checkbox, Form, Input, ConfigProvider, Flex} from 'antd';
 import { useResponsive } from 'antd-style';
+import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 
 // - - -  Data imports - - - //
 import { SideNavRoutes } from '../data/mainListObjects';
 import "../styles/SideNav.css";
-import { MainListDropDown } from "../data/mainListDropDown";
+
+
 
 export default function List () {
 
@@ -108,6 +110,12 @@ export default function List () {
 
     const { xxl } = useResponsive();
 
+    const [creatingFolder, setCreatingFolder] = useState(false);
+    // <- Tracks if a folder is being created 
+    
+    const [newFolderName, setNewFolderName] = useState("");
+    // <- Stores the name of the new folder being created 
+
 
     // - - -  Modal - - - //
   const showModal = () => {
@@ -118,11 +126,6 @@ export default function List () {
   };
   const handleCancel = () => {
     setIsModalOpen(false);
-  };
-
-  const handleMenuClick = ({ key }) => {
-    setModalType(key);
-    showModal(); // your existing function
   };
 
 
@@ -154,6 +157,12 @@ export default function List () {
     if (path) {
       navigate(path); // 👈 navigate
     }
+  };
+
+  const handleCreateFolderClick = () => {
+    setCreatingFolder(true);
+    setNewFolderName("");
+    enterPressedRef.current = false;
   };
 
 
@@ -202,17 +211,37 @@ export default function List () {
       const children = [
         ...folderSubLists.map(sub => ({
           key: sub.id,
-          label: sub.name,
+          label: (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>{sub.name}</span>
+        
+              <DeleteOutlined
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteSubList(sub.id);
+                }}
+                className="cursor-pointer transition-colors duration-200 hover:text-[#1890ff]"
+                style={{ color: "#ff4d4f" }}
+              />
+            </div>
+          ),
           onClick: () => navigate(`/sublist/${sub.id}`),
         })),
         // Add "+ Add sublist" trigger button below the last sublist
         ...(isCreating ? [] : [{
           key: `add-sublist-${folder.id}`,
-          label: '+',
+          label: (<PlusCircleOutlined className="text-black cursor-pointer transition-colors duration-200 hover:text-[#1890ff]" />),
           onClick: ({ domEvent }) => {
             if (domEvent) {
               domEvent.stopPropagation();
             }
+            console.log("folder.id =", folder.id, typeof folder.id);
             // Open the folder if it's not already open
             setOpenKeys(prev =>
               prev.includes(folder.id) ? prev : [...prev, folder.id]
@@ -222,8 +251,10 @@ export default function List () {
             setNewSubListName("");
             enterPressedRef.current = false;
           },
-          style: { color: '#1890ff' }
+          style: { color: '#1890ff', cursor: "pointer" },
+          
         }]),
+
         // Add input field for creating new sublist if this folder is in create mode
         ...(isCreating ? [{
           key: `create-${folder.id}`,
@@ -265,8 +296,20 @@ export default function List () {
       ];
 
       return {
-        key: folder.id,
-        label: folder.name,
+        key: String(folder.id),
+        label: (
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span>{folder.name}</span>
+      
+            <DeleteOutlined
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteFolder(folder.id);
+              }}
+              className="cursor-pointer transition-colors duration-200 hover:text-[#1890ff]"
+            />
+          </div>
+        ),
         children: children.length > 0 ? children : undefined,
       };
     });
@@ -332,6 +375,102 @@ export default function List () {
       enterPressedRef.current = false;
     };
 
+    const handleCreateFolderInline = async () => {
+      setErr("");
+    
+      if (!newFolderName.trim()) {
+        handleCancelCreateFolder();
+        return;
+      }
+    
+      try {
+        const data = await createFolderApi({ name: newFolderName.trim() });
+    
+        setFolder(current => [...current, data]);
+        setCreatingFolder(false);
+        setNewFolderName("");
+        enterPressedRef.current = false;
+      } catch (error) {
+        console.error("Failed creating folder:", error);
+        setErr(
+          error?.response?.data?.error ||
+          error?.response?.data?.message ||
+          "Failed creating folder"
+        );
+        enterPressedRef.current = false;
+      }
+    };
+
+    const handleCancelCreateFolder = () => {
+      setCreatingFolder(false);
+      setNewFolderName("");
+      enterPressedRef.current = false;
+    };
+    
+
+    // DELETE Data //
+
+    // <- DELETEs sublist -> //
+    const handleDeleteSubList = async (subListId) => {
+      setErr("");
+    
+      try {
+        await deleteSubList(subListId);
+    
+        // Remove sublist from state
+        setSubList(current =>
+          current.filter(sub => sub.id !== subListId)
+        );
+    
+        // Optional: navigate away if user is on this sublist
+        navigate("/");
+    
+      } catch (error) {
+        console.error("Failed deleting sublist:", error);
+        setErr(
+          error?.response?.data?.error ||
+          error?.response?.data?.message ||
+          "Failed deleting sublist"
+        );
+      }
+    };
+    
+    // <- DELETEs folder -> //
+    const handleDeleteFolder = async (folderId) => {
+      setErr("");
+    
+      try {
+        await deleteFolder(folderId);
+    
+        // Remove folder
+        setFolder(current =>
+          current.filter(folder => folder.id !== folderId)
+        );
+    
+        // Remove all sublists under this folder
+        setSubList(current =>
+          current.filter(sub => sub.folderId !== folderId)
+        );
+    
+        // Close menu section if open
+        setOpenKeys(current =>
+          current.filter(key => key !== folderId)
+        );
+    
+        navigate("/");
+    
+      } catch (error) {
+        console.error("Failed deleting folder:", error);
+        setErr(
+          error?.response?.data?.error ||
+          error?.response?.data?.message ||
+          "Failed deleting folder"
+        );
+      }
+    };
+    
+
+
      // - - -  Other - - - //
      useEffect (() => {
         (async () => {
@@ -341,7 +480,7 @@ export default function List () {
         })(); 
     }, []);
 
-    // <- useEffect renders data when thepage first loads. 
+    // <- useEffect renders data when the page first loads. 
 
     // <- The [] stops infinite rendering. 
 
@@ -368,18 +507,50 @@ export default function List () {
       openKeys={openKeys}
       onOpenChange={setOpenKeys}
       mode="inline"
-      items={buildMenuItems(folder, subList, navigate)}
+      items={[
+        ...buildMenuItems(folder, subList),
+        ...(creatingFolder
+          ? [{
+              key: "create-folder",
+              label: (
+                <Input
+                  placeholder="New folder"
+                  bordered={false}
+                  value={newFolderName}
+                  autoFocus
+                  onChange={(e) => setNewFolderName(e.target.value)}
+                  onPressEnter={async (e) => {
+                    e.stopPropagation();
+                    enterPressedRef.current = true;
+                    await handleCreateFolderInline();
+                  }}
+                  onBlur={() => {
+                    setTimeout(() => {
+                      if (!enterPressedRef.current) {
+                        handleCancelCreateFolder();
+                      }
+                    }, 0);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => {
+                    if (e.key !== "Enter") {
+                      enterPressedRef.current = false;
+                    }
+                  }}
+                />
+              ),
+            }]
+          : [])
+      ]}
+      
     />
-   <Dropdown
-  menu={{
-    items: MainListDropDown,
-    onClick: handleMenuClick,
-  }}
->
-  <Button className="mt-8" type="primary" variant="text">
-    Add
-  </Button>
-</Dropdown>
+
+<PlusCircleOutlined
+  style={{ fontSize: 22, marginTop: 24 }}
+  onClick={handleCreateFolderClick}
+  className="text-black cursor-pointer transition-colors duration-200 hover:text-[#1890ff] hover:bg-gray-100 rounded-md p-2"
+/>
+
 
 <Modal
   open={isModalOpen}
@@ -437,9 +608,11 @@ export default function List () {
   <Button type="primary" htmlType="submit">
     Create List
   </Button>
+  <DeleteOutlined className="cursor-pointer transition-colors duration-200 hover:text-[#1890ff]" />
 </Form.Item>
     </Form>
     </div>}
+    <DeleteOutlined className="cursor-pointer transition-colors duration-200 hover:text-[#1890ff]" />
 </Modal>
    
                 </div>

@@ -3,7 +3,7 @@
 
 // Import tools //
 import { NextResponse } from "next/server";
-import { subListsCreate } from "../../../validation/subList";
+import { subListsCreate, subListsDelete } from "../../../validation/subList";
 
 
 // Import model files //
@@ -80,5 +80,58 @@ export async function POST(req) {
         return NextResponse.json({ error: "failed creating", message: msg }, { status: 400 });
     }
 }
+
+export async function DELETE(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    // Validate input
+    const parsed = subListsDelete.safeParse({ id });
+
+    if (!parsed.success) {
+      console.error("Delete validation failed:", parsed.error.format());
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          message: parsed.error.format(),
+          details: parsed.error.errors,
+        },
+        { status: 400 }
+      );
+    }
+
+    // Check existence
+    const subList = await SubLists.findByPk(parsed.data.id);
+
+    if (!subList) {
+      return NextResponse.json(
+        { error: "SubList not found" },
+        { status: 404 }
+      );
+    }
+
+    // Delete
+    await subList.destroy();
+
+    return NextResponse.json(
+      { message: "SubList deleted successfully" },
+      { status: 200 }
+    );
+
+  } catch (err) {
+    console.error("Error deleting sublist:", err);
+    const msg =
+      process.env.NODE_ENV === "development"
+        ? err.parent?.sqlMessage || err.message
+        : "Error deleting sublist";
+
+    return NextResponse.json(
+      { error: "Failed deleting sublist", message: msg },
+      { status: 500 }
+    );
+  }
+}
+
 
 export const dynamic = "force-dynamic"
