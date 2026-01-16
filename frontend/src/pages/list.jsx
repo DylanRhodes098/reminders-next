@@ -1,6 +1,6 @@
 
 // - - -  React imports - - - //
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import React from 'react';
 
@@ -56,6 +56,7 @@ export default function List () {
     // <- form.setFieldsValue(object) ← form.setFieldsValue ({ "name" : "My Folder", "Place" : "Upminster"}) = Sets multiple field's value. 
 
     // <- form.submit(); = Triggers a submit, used on onFinish functions. 
+    
 
 
 
@@ -93,6 +94,20 @@ export default function List () {
 
     // <- Example =  modalType === 'folder'. 
 
+    const [creatingSubListForFolder, setCreatingSubListForFolder] = useState(null);
+    // <- Tracks which folder is in "create sublist" mode
+
+    const [newSubListName, setNewSubListName] = useState("");
+    // <- Stores the name of the new sublist being created
+
+    const [openKeys, setOpenKeys] = useState([]);
+    // <- Tracks which folders are open in the menu
+
+    const enterPressedRef = useRef(false);
+    // <- Tracks if Enter was pressed to prevent canceling on blur after Enter
+
+    const { xxl } = useResponsive();
+
 
     // - - -  Modal - - - //
   const showModal = () => {
@@ -124,6 +139,16 @@ export default function List () {
 
   // - - -  onClick Functions - - - //
   const onClickHome = (e) => {
+    // Cancel sublist creation if clicking on a menu item (not the input or add button)
+    if (
+      creatingSubListForFolder &&
+      !e.key.startsWith('create-') &&
+      !e.key.startsWith('add-sublist-') &&
+      e.key !== creatingSubListForFolder
+    ) {
+      handleCancelSubList();
+    }
+
     const path = routesByKey[e.key];
 
     if (path) {
@@ -170,18 +195,81 @@ export default function List () {
 
    // <- Displays GET data according to Ants Menu Component -> // 
    function buildMenuItems(folders, subList) {
-    return folders.map(folder => ({
-      key: folder.id,
-      label: folder.name,
-
-      children: subList
-        .filter(sub => sub.folderId === folder.id)
-        .map(sub => ({
+    return folders.map(folder => {
+      const folderSubLists = subList.filter(sub => sub.folderId === folder.id);
+      const isCreating = creatingSubListForFolder === folder.id;
+      
+      const children = [
+        ...folderSubLists.map(sub => ({
           key: sub.id,
           label: sub.name,
           onClick: () => navigate(`/sublist/${sub.id}`),
         })),
-    }));
+        // Add "+ Add sublist" trigger button below the last sublist
+        ...(isCreating ? [] : [{
+          key: `add-sublist-${folder.id}`,
+          label: '+',
+          onClick: ({ domEvent }) => {
+            if (domEvent) {
+              domEvent.stopPropagation();
+            }
+            // Open the folder if it's not already open
+            setOpenKeys(prev =>
+              prev.includes(folder.id) ? prev : [...prev, folder.id]
+            );
+            
+            setCreatingSubListForFolder(folder.id);
+            setNewSubListName("");
+            enterPressedRef.current = false;
+          },
+          style: { color: '#1890ff' }
+        }]),
+        // Add input field for creating new sublist if this folder is in create mode
+        ...(isCreating ? [{
+          key: `create-${folder.id}`,
+          label: (
+            <Input 
+              placeholder="Borderless" 
+              bordered={false}
+              value={newSubListName}
+              onChange={(e) => setNewSubListName(e.target.value)}
+              onPressEnter={async (e) => {
+                e.stopPropagation();
+                enterPressedRef.current = true;
+                if (newSubListName.trim()) {
+                  await handleCreateSubList(folder.id);
+                } else {
+                  handleCancelSubList();
+                }
+              }}
+              onBlur={(e) => {
+                // Use setTimeout to allow onPressEnter to set the ref first
+                setTimeout(() => {
+                  // Only cancel if Enter was not pressed
+                  if (!enterPressedRef.current) {
+                    handleCancelSubList();
+                  }
+                }, 0);
+              }}
+              autoFocus
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                // Reset ref if user presses any key other than Enter
+                if (e.key !== 'Enter') {
+                  enterPressedRef.current = false;
+                }
+              }}
+            />
+          ),
+        }] : [])
+      ];
+
+      return {
+        key: folder.id,
+        label: folder.name,
+        children: children.length > 0 ? children : undefined,
+      };
+    });
   }
 
    // POST Data //
@@ -199,6 +287,35 @@ export default function List () {
       } catch (error) {
         setErr(error?.response?.data?.error || "failed creating folder");
       }
+    };
+
+  // <- POSTS new sublist -> //
+    const handleCreateSubList = async (folderId) => {
+      setErr("");
+      if (!newSubListName.trim()) {
+        handleCancelSubList();
+        return;
+      }
+      try {
+        const data = await createSubList({ 
+          name: newSubListName.trim(), 
+          folderId: folderId 
+        });
+    
+        setSubList(current => [...current, data]);
+        setCreatingSubListForFolder(null);
+        setNewSubListName("");
+        enterPressedRef.current = false;
+      } catch (error) {
+        setErr(error?.response?.data?.error || "failed creating sublist");
+        enterPressedRef.current = false;
+      }
+    };
+
+    const handleCancelSubList = () => {
+      setCreatingSubListForFolder(null);
+      setNewSubListName("");
+      enterPressedRef.current = false;
     };
 
      // - - -  Other - - - //
@@ -222,7 +339,7 @@ export default function List () {
         }
      }
 
-     
+
 
      return (
         <>
@@ -230,10 +347,12 @@ export default function List () {
         <h1 className="mb-4 font-bold text-xl">List</h1>
         <Menu
     className=""
+      key={`menu-${creatingSubListForFolder || 'none'}`}
       onClick={onClickHome}
       style={{ width: '100%' }}
       defaultSelectedKeys={['1']}
-      defaultOpenKeys={['sub1']}
+      openKeys={openKeys}
+      onOpenChange={setOpenKeys}
       mode="inline"
       items={buildMenuItems(folder, subList, navigate)}
     />
