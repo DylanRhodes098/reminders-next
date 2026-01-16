@@ -19,6 +19,14 @@ List.init ({
     defaultValue: DataTypes.UUIDV4,
   },
 
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
+
   // foreign key
   folderId: {
     type: DataTypes.UUID,

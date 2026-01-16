@@ -12,17 +12,6 @@ export default function Login() {
     const [err, setErr] = useState("");
     const navigate = useNavigate();
 
-    async function onSubmit (e) {
-        e.preventDefault();
-        setErr("");
-        try {
-            await loginUser({email, password});
-            navigate("/home", {replace: true} );
-        } catch (error) {
-            setErr(error?.response?.data?.error || "login failed" );
-        }
-    }
-
     function warningMessage () {
         if (!err) {
           return null;
@@ -32,8 +21,19 @@ export default function Login() {
         }
       }
 
-      const onFinish = values => {
-        console.log('Success:', values);
+      const onFinish = async (values) => {
+        setErr("");
+        try {
+            await loginUser({email: values.email || email, password: values.password || password});
+            navigate("/", {replace: true} );
+        } catch (error) {
+            const errorMessage = error?.response?.data?.error || error?.response?.data?.msg || "login failed";
+            if (errorMessage.includes("incorrect info") || errorMessage.includes("failed Logging in")) {
+                setErr("User doesn't exist, please register.");
+            } else {
+                setErr(errorMessage);
+            }
+        }
       };
       const onFinishFailed = errorInfo => {
         console.log('Failed:', errorInfo);
@@ -53,14 +53,13 @@ export default function Login() {
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
-            className="m-4 flex flex-col items-center" 
-            onSubmit={onSubmit}
+            className="m-4 flex flex-col items-center"
             >
                 <div className="p-4 flex flex-col items-center">
             <Form.Item
-            label="Username"
-            name="username"
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            label="Email"
+            name="email"
+            rules={[{ required: true, message: 'Please input your email!' }]}
             htmlFor="email" 
             className="">
             <Input 

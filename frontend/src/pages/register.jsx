@@ -32,8 +32,18 @@ export default function Register() {
     }
   }
 
-  const onFinish = values => {
-    console.log('Success:', values);
+  const onFinish = async (values) => {
+    setErr("");
+    try {
+      await registerUser({ 
+        full_name: values.full_name, 
+        email: values.email, 
+        password: values.password 
+      });
+      navigate("/login", { replace: true });
+    } catch (error) {
+      setErr(error?.response?.data?.error || "Registration failed");
+    }
   };
   const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
@@ -64,12 +74,11 @@ export default function Register() {
                   onFinish={onFinish}
                   onFinishFailed={onFinishFailed}
                   autoComplete="off"
-      onSubmit={onSubmit} 
       className="m-4 flex flex-col items-center">
         <div className="p-4 flex flex-col items-center">
           <Form.Item
           label="Username"
-          name="username"
+          name="full_name"
           rules={[{ required: true, message: 'Please input your username!' }]}
           htmlFor="full_name" 
           className="">
@@ -105,7 +114,7 @@ export default function Register() {
         <div className="p-4 flex flex-col items-center">
         <Form.Item
           label="Password"
-          name="passworde"
+          name="password"
           rules={[{ required: true, message: 'Please input your password!' }]} 
           htmlFor="password" 
           className="">

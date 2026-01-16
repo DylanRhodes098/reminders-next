@@ -3,7 +3,9 @@
 
 // Import tools //
 import { NextResponse } from "next/server";
-import { folderCreate } from "../../../validation/folder";
+import { folderCreate, folderUpdate } from "../../../validation/folder";
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../../../lib/db.js";
 
 
 // Import model files //
@@ -48,6 +50,25 @@ export async function GET(req) {
 // Create a post route to create a profile //
 export async function POST(req) {
     try {
+    // Extract userId from JWT token
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.substring(7); // Remove "Bearer " prefix
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (jwtError) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    const userId = decoded.id;
+    if (!userId) {
+      return NextResponse.json({ error: "User ID not found in token" }, { status: 401 });
+    }
+
     const body = await req.json();
     const parsed = folderCreate.safeParse(body);
 
@@ -55,7 +76,13 @@ export async function POST(req) {
         return NextResponse.json({ error: "Missing fields", message: parsed.error.format() }, { status: 400 });
       }
          
-      const createFolder = await Folder.create(parsed.data);
+      // Add userId to the folder data
+      const folderData = {
+        ...parsed.data,
+        userId: userId
+      };
+      
+      const createFolder = await Folder.create(folderData);
         
         return NextResponse.json(createFolder, { status: 200 });
 
