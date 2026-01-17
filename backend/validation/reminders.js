@@ -2,10 +2,11 @@ import { z } from "zod";
 
 export const remindersCreate = z.object({
   note: z.string().min(1, "Note required"),
-  date_of_reminder: z.coerce.date().refine(
-    (d) => d > new Date(),
-    { message: "Date must be in the future" }
-  ),
+  date_of_reminder: z.coerce.date()
+    .refine((d) => d > new Date(), { message: "Date must be in the future" })
+    .optional()
+    .nullable(),
+  reminderFolderId: z.string().uuid().optional().nullable(),
   subListId: z.string().uuid(),
 });
 

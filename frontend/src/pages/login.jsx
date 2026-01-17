@@ -2,12 +2,19 @@
 import React from 'react';
 import {useState} from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { motion } from "motion/react";
 
 // - - -  Backend imports - - - //
 import { login as loginUser} from "../services/auth";
 
 // - - -  UI Components - - - //
 import { Button, Checkbox, Form, Input, Card, Space } from 'antd';
+import { BackgroundGradientAnimation } from "../components/ui/background-gradient-animation";
+import { Label } from "../components/ui/label";
+import { Input } from "../components/ui/input";
+import { cn } from "@/lib/utils";
+import { IconBrandGithub, IconBrandGoogle, IconBrandOnlyfans} from "@tabler/icons-react";
+
 
 // - - - Data imports - - - //
 import "../styles/LoginRegister.css"
@@ -52,10 +59,29 @@ export default function Login() {
           }
         }
       };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("Form submitted");
+      };
+      
       
     return (
         <> 
-        <div className="backGround h-screen w-screen flex flex-col items-center text-center">
+ <BackgroundGradientAnimation>
+      <motion.div
+        initial={{ opacity: 0.0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.3,
+          duration: 0.8,
+          ease: "easeInOut",
+        }}
+        className="relative flex flex-col gap-4 items-center justify-center px-4"
+      >
+        
+   
+        <div className="backGround h-screen w-screen flex flex-col items-center text-center relative z-10">
         <Space className="m-12" direction="vertical" size={20}>
         <Card title="Login" style={{ width: 500 }}>
         <Form
@@ -97,9 +123,16 @@ export default function Login() {
 
   {warningMessage()}
 </Form>
+
         </Card>
         </Space>
         </div>
+        </motion.div>
+        </BackgroundGradientAnimation>
+        
+
+     
         </> 
+        
     )
 }

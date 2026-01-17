@@ -45,6 +45,12 @@ if (!SubLists.associations?.reminderFolders)
     as: 'reminderFolders'
 });
 
+if (!ReminderFolder.associations?.reminders) 
+    ReminderFolder.hasMany(Reminders, {
+    foreignKey: 'reminderFolderId',
+    as: 'reminders'
+});
+
 
 // Create belongsto relationships //
 if (!Folder.associations?.user)
@@ -79,6 +85,13 @@ if (!Folder.associations?.user)
     ReminderFolder.belongsTo(SubLists, {
       foreignKey: 'subListId',
       as: 'subList',
+    });
+
+  // Reminders belongs to ReminderFolder
+  if (!Reminders.associations?.reminderFolder)
+    Reminders.belongsTo(ReminderFolder, {
+      foreignKey: 'reminderFolderId',
+      as: 'reminderFolder',
     });
 
       export { User, Folder, List, SubLists, Reminders, ReminderFolder };

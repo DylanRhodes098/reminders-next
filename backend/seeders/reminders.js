@@ -6,7 +6,8 @@ export async function up(queryInterface, Sequelize) {
       id: 'c1e8b3a6-4d2a-4f9e-9a6b-8d2e4f1a7c55',
       note: 'Stand-up meeting',
       date_of_reminder: new Date(Date.now() + 60 * 60 * 1000),
-      subListId: '3f8c2c6a-2d1e-4e4a-8f55-9c6f2f7e3a91', // Morning
+      subListId: '3f8c2c6a-2d1e-4e4a-8f55-9c6f2f7e3a91',
+      reminderFolderId: '1f2c3d4e-5f6e-7f8d-9a0b-1c2d3e4f5g6h', // Morning
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -15,6 +16,7 @@ export async function up(queryInterface, Sequelize) {
       note: 'Gym session',
       date_of_reminder: new Date(Date.now() + 24 * 60 * 60 * 1000),
       subListId: '8a6e3b1c-5d14-4c8e-9b7f-1f3c6a9e2d44', // Evening
+      reminderFolderId: '1f2c3d4e-5f6e-7f8d-9a0b-1c2d3e4f5g6h',
       createdAt: new Date(),
       updatedAt: new Date(),
     },

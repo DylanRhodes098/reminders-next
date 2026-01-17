@@ -9,7 +9,6 @@ import { JWT_SECRET } from "../../../lib/db.js";
 
 
 // Import model files //
-
 import ReminderFolder from "../../../models/reminderFolder";
 
 // Define node runtime //
@@ -20,6 +19,7 @@ export async function GET(req) {
     try {
     const { searchParams } = new URL(req.url);
     const subListId = searchParams.get('subListId');
+    console.log("GET reminderFolder request - subListId:", subListId);
     
     const queryOptions = {};
     
@@ -29,15 +29,16 @@ export async function GET(req) {
     }
     
     const reminderFolders = await ReminderFolder.findAll(queryOptions);
+    console.log("Found reminder folders:", reminderFolders.length);
 
     return NextResponse.json(reminderFolders, {status:200});
     } catch (err) {
-        console.error("GET failed:", err);
+        console.error("GET reminderFolder failed:", err);
         const msg =
           process.env.NODE_ENV === "development"
             ? err.parent?.sqlMessage || err.message
             : "Error retrieving groups";
-        return NextResponse.json(msg, { error: "Error retrieving reminder folders" }, { status: 500 });
+        return NextResponse.json({ error: "Error retrieving reminder folders", message: msg }, { status: 500 });
     }
 }
 
@@ -47,7 +48,10 @@ export async function POST(req) {
     try {
     // Extract userId from JWT token
     const authHeader = req.headers.get("authorization");
+    console.log("Authorization header:", authHeader ? "Present" : "Missing");
+    
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.error("Missing or invalid authorization header");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -55,19 +59,24 @@ export async function POST(req) {
     let decoded;
     try {
       decoded = jwt.verify(token, JWT_SECRET);
+      console.log("Token decoded successfully, userId:", decoded.id);
     } catch (jwtError) {
+      console.error("JWT verification failed:", jwtError.message);
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
     const userId = decoded.id;
     if (!userId) {
+      console.error("User ID not found in decoded token");
       return NextResponse.json({ error: "User ID not found in token" }, { status: 401 });
     }
 
     const body = await req.json();
+    console.log("Received reminder folder creation request:", body);
     const parsed = reminderFolderCreate.safeParse(body);
 
     if (!parsed.success) {
+        console.error("Validation failed:", parsed.error.format());
         return NextResponse.json({ error: "Missing fields", message: parsed.error.format() }, { status: 400 });
       }
          
@@ -77,16 +86,19 @@ export async function POST(req) {
         userId: userId
       };
       
+      console.log("Creating reminder folder with data:", reminderFolderData);
       const createReminderFolder = await ReminderFolder.create(reminderFolderData);
+      console.log("Reminder folder created successfully:", createReminderFolder.id);
         
         return NextResponse.json(createReminderFolder, { status: 200 });
 
     } catch (err) {
+        console.error("Error creating reminder folder:", err);
         const msg =
         process.env.NODE_ENV === "development"
           ? err.parent?.sqlMessage || err.message
           : "Error retrieving";
-        return NextResponse.json(msg, { error: "failed creating" }, { status: 400 });
+        return NextResponse.json({ error: "failed creating", message: msg }, { status: 400 });
     }
 }
 

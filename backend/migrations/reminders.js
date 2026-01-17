@@ -18,13 +18,18 @@ await queryInterface.createTable('reminders', {
   },
   date_of_reminder: {
     type: Sequelize.DATE,
-    allowNull: false,
+    allowNull: true,
   },
 
    // foreign key
   subListId: {
     type: Sequelize.UUID,
     allowNull: false,
+  },
+  // foreign key
+  reminderFolderId: {
+    type: Sequelize.UUID,
+    allowNull: true,
   },
   createdAt: {
     allowNull: false,

@@ -29,7 +29,7 @@ Reminders.init ({
 
   date_of_reminder: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
     validate: {
       isDate: true,
       isAfter: new Date().toISOString(), // must be in the past
@@ -42,6 +42,15 @@ Reminders.init ({
     allowNull: false,
     validate: {
       notEmpty: true,
+      isUUID: 4,
+    },
+  },
+
+  // foreign key
+  reminderFolderId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    validate: {
       isUUID: 4,
     },
   },

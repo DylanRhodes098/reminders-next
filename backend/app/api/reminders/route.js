@@ -18,6 +18,7 @@ export async function GET(req) {
     try {
     const { searchParams } = new URL(req.url);
     const subListId = searchParams.get('subListId');
+    console.log("GET reminders request - subListId:", subListId);
     
     const queryOptions = {};
     
@@ -27,15 +28,16 @@ export async function GET(req) {
     }
     
     const reminders = await Reminders.findAll(queryOptions);
+    console.log("Found reminders:", reminders.length);
 
     return NextResponse.json(reminders, {status:200});
     } catch (err) {
-        console.error("GET failed:", err);
+        console.error("GET reminders failed:", err);
         const msg =
           process.env.NODE_ENV === "development"
             ? err.parent?.sqlMessage || err.message
             : "Error retrieving";
-        return NextResponse.json(msg, { error: "Error retrieving folders" }, { status: 500 });
+        return NextResponse.json({ error: "Error retrieving reminders", message: msg }, { status: 500 });
     }
 }
 
