@@ -10,9 +10,12 @@ import { getSubListById } from "../services/subList";
 import { listReminderFolder, createReminderFolder,deleteReminderFolder } from "../services/reminderFolder";
 
 // - - -  UI Components - - - //
-import { DatePicker, Button, Dropdown, Space, Modal, Card, Menu, Checkbox, Form, Input, ConfigProvider, Flex, Divider} from 'antd';
+import { DatePicker, Button, Dropdown, Space, Modal, Card, Menu, Checkbox, Form, Input, ConfigProvider, Flex, Divider, TimePicker} from 'antd';
 import { useResponsive } from 'antd-style';
 import { PlusCircleOutlined, DeleteOutlined } from "@ant-design/icons";
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
 
 // - - -  Data imports - - - //
 import "../styles/SideNav.css";
@@ -57,6 +60,8 @@ export default function Reminders () {
     const [newFolderName, setNewFolderName] = useState("");
     const [creatingReminderForFolder, setCreatingReminderForFolder] = useState(null);
     const [newReminderText, setNewReminderText] = useState("");
+    const [newReminderDate, setNewReminderDate] = useState(null);
+    const [newReminderTime, setNewReminderTime] = useState(null);
     const [openKeys, setOpenKeys] = useState([]);
     const enterPressedRef = useRef(false);
 
@@ -125,7 +130,7 @@ export default function Reminders () {
             ...folderReminders.map(reminder => ({
               key: reminder.id,
               label: (
-                <div className="flex-between">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span>{reminder.note}</span>
                   <DeleteOutlined
                     className="delete-icon"
@@ -133,6 +138,7 @@ export default function Reminders () {
                       e.stopPropagation();
                       handleDeleteReminder(reminder.id);
                     }}
+                    style={{ color: "#ff4d4f" }}
                   />
                 </div>
               )
@@ -146,6 +152,8 @@ export default function Reminders () {
                 setOpenKeys(prev => [...new Set([...prev, folder.id])]);
                 setCreatingReminderForFolder(folder.id);
                 setNewReminderText("");
+                setNewReminderDate(null);
+                setNewReminderTime(null);
                 enterPressedRef.current = false;
               }
             }]),
@@ -153,33 +161,59 @@ export default function Reminders () {
             ...(isCreating ? [{
               key: `create-${folder.id}`,
               label: (
-                <Input
-                  placeholder="New reminder"
-                  bordered={false}
-                  autoFocus
-                  value={newReminderText}
-                  onChange={e => setNewReminderText(e.target.value)}
-                  onPressEnter={() => handleCreateReminder(folder.id)}
-                  onBlur={() => {
-                    setTimeout(() => {
-                      if (!enterPressedRef.current) {
+                <div>
+                  <Input
+                    placeholder="New reminder"
+                    bordered={false}
+                    autoFocus
+                    value={newReminderText}
+                    onChange={e => setNewReminderText(e.target.value)}
+                    onPressEnter={async (e) => {
+                      e.stopPropagation();
+                      enterPressedRef.current = true;
+                      if (newReminderText.trim()) {
+                        await handleCreateReminder(folder.id);
+                      } else {
                         handleCancelCreateReminder();
                       }
-                    }, 0);
-                  }}
-                  onKeyDown={e => {
-                    if (e.key !== "Enter") enterPressedRef.current = false;
-                  }}
-                  onClick={e => e.stopPropagation()}
-                />
+                    }}
+                    onBlur={() => {
+                      setTimeout(() => {
+                        if (!enterPressedRef.current) {
+                          handleCancelCreateReminder();
+                        }
+                      }, 0);
+                    }}
+                    onKeyDown={e => {
+                      if (e.key !== "Enter") enterPressedRef.current = false;
+                    }}
+                    onClick={e => e.stopPropagation()}
+                  />
+                  <div style={{ marginTop: "8px", display: "flex", gap: "8px" }}>
+                    <DatePicker
+                      placeholder="Date"
+                      value={newReminderDate}
+                      onChange={(date) => setNewReminderDate(date)}
+                      onClick={e => e.stopPropagation()}
+                      style={{ width: "120px" }}
+                    />
+                    <TimePicker
+                      placeholder="Time"
+                      value={newReminderTime}
+                      onChange={(time) => setNewReminderTime(time)}
+                      format="HH:mm"
+                      onClick={e => e.stopPropagation()}
+                      style={{ width: "100px" }}
+                    />
+                  </div>
+                </div>
               )
             }] : [])
           ];
-      
           return {
             key: folder.id,
             label: (
-              <div className="flex-between">
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span>{folder.name}</span>
                 <DeleteOutlined
                   className="delete-icon"
@@ -214,8 +248,14 @@ export default function Reminders () {
         setReminderFolders(prev => [...prev, data]);
         handleCancelCreateFolder();
       } catch (e) {
-        console.error(e);
-        setErr("Failed creating reminder folder");
+        console.error("Error creating reminder folder:", e);
+        console.error("Error response:", e?.response?.data);
+        // Check if it's an auth error
+        if (e?.response?.status === 401 || e?.response?.status === 403) {
+          // Let the interceptor handle the redirect
+          return;
+        }
+        setErr(e?.response?.data?.error || e?.response?.data?.message || "Failed creating reminder folder");
       }
     };
     
@@ -235,23 +275,60 @@ export default function Reminders () {
       }
     
       try {
-        const data = await createReminders({
+        // Combine date and time if both are provided
+        let dateOfReminder = null;
+        if (newReminderDate) {
+          if (newReminderTime) {
+            // Combine date and time
+            const date = newReminderDate.toDate();
+            const time = newReminderTime.toDate();
+            date.setHours(time.getHours());
+            date.setMinutes(time.getMinutes());
+            date.setSeconds(time.getSeconds());
+            dateOfReminder = date.toISOString();
+          } else {
+            // Just date
+            dateOfReminder = newReminderDate.toDate().toISOString();
+          }
+        } else if (newReminderTime) {
+          // Just time - use today's date
+          const today = dayjs();
+          const time = newReminderTime.toDate();
+          const combined = today.hour(time.getHours()).minute(time.getMinutes()).second(time.getSeconds());
+          dateOfReminder = combined.toDate().toISOString();
+        }
+
+        const payload = {
           note: newReminderText.trim(),
           reminderFolderId: folderId,
           subListId: subListId,
-        });
+        };
+
+        if (dateOfReminder) {
+          payload.date_of_reminder = dateOfReminder;
+        }
+
+        const data = await createReminders(payload);
     
         setReminders(prev => [...prev, data]);
         handleCancelCreateReminder();
       } catch (e) {
-        console.error(e);
-        setErr("Failed creating reminder");
+        console.error("Error creating reminder:", e);
+        console.error("Error response:", e?.response?.data);
+        // Check if it's an auth error
+        if (e?.response?.status === 401 || e?.response?.status === 403) {
+          // Let the interceptor handle the redirect
+          return;
+        }
+        setErr(e?.response?.data?.error || e?.response?.data?.message || "Failed creating reminder");
       }
     };
     
     const handleCancelCreateReminder = () => {
       setCreatingReminderForFolder(null);
       setNewReminderText("");
+      setNewReminderDate(null);
+      setNewReminderTime(null);
       enterPressedRef.current = false;
     };
 
@@ -269,6 +346,8 @@ export default function Reminders () {
       await deleteReminders(id);
       setReminders(prev => prev.filter(r => r.id !== id));
     };
+
+    dayjs.extend(customParseFormat);
 
      // Other //
      useEffect(() => {
@@ -288,8 +367,14 @@ export default function Reminders () {
           setReminders(Array.isArray(reminders) ? reminders : []);
     
         } catch (e) {
-          console.error(e);
-          setErr("Failed loading reminders");
+          console.error("Error loading data:", e);
+          console.error("Error response:", e?.response?.data);
+          // Check if it's an auth error
+          if (e?.response?.status === 401 || e?.response?.status === 403) {
+            // Let the interceptor handle the redirect
+            return;
+          }
+          setErr(e?.response?.data?.error || e?.response?.data?.message || "Failed loading reminders");
         }
       })();
     }, [subListId]);
@@ -318,11 +403,15 @@ export default function Reminders () {
           autoFocus
           value={newFolderName}
           onChange={e => setNewFolderName(e.target.value)}
-          onPressEnter={(e) => {
-            e.preventDefault();      // ⛔ stop form submit / routing
-            e.stopPropagation();     // ⛔ stop AntD Menu keyboard handling
+          onPressEnter={async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             enterPressedRef.current = true;
-            handleCreateReminderFolder();
+            if (newFolderName.trim()) {
+              await handleCreateReminderFolder();
+            } else {
+              handleCancelCreateFolder();
+            }
           }}
           onBlur={() => {
             setTimeout(() => {
@@ -330,6 +419,9 @@ export default function Reminders () {
                 handleCancelCreateFolder();
               }
             }, 0);
+          }}
+          onKeyDown={e => {
+            if (e.key !== "Enter") enterPressedRef.current = false;
           }}
           onClick={e => e.stopPropagation()}
         />
