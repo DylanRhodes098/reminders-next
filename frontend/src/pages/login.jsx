@@ -11,8 +11,8 @@ import { login as loginUser} from "../services/auth";
 import { Button, Checkbox, Form, Input, Card, Space } from 'antd';
 import { BackgroundGradientAnimation } from "../components/ui/background-gradient-animation";
 import { Label } from "../components/ui/label";
-import { Input } from "../components/ui/input";
-import { cn } from "@/lib/utils";
+
+import { cn } from "../components/libs/utilsLogin";
 import { IconBrandGithub, IconBrandGoogle, IconBrandOnlyfans} from "@tabler/icons-react";
 
 

@@ -59,8 +59,11 @@ export default function List () {
     // <- form.setFieldsValue(object) ← form.setFieldsValue ({ "name" : "My Folder", "Place" : "Upminster"}) = Sets multiple field's value. 
 
     // <- form.submit(); = Triggers a submit, used on onFinish functions. 
-    
 
+
+    const enterPressedRef = useRef(false);
+    // <- Tracks if Enter was pressed to prevent canceling on blur after Enter
+    
 
 
     // - - -  UseStates - - - //
@@ -106,30 +109,12 @@ export default function List () {
     const [openKeys, setOpenKeys] = useState([]);
     // <- Tracks which folders are open in the menu
 
-    const enterPressedRef = useRef(false);
-    // <- Tracks if Enter was pressed to prevent canceling on blur after Enter
-
-    const { xxl } = useResponsive();
 
     const [creatingFolder, setCreatingFolder] = useState(false);
     // <- Tracks if a folder is being created 
     
     const [newFolderName, setNewFolderName] = useState("");
     // <- Stores the name of the new folder being created 
-
-
-    // - - -  Modal - - - //
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-
 
   // - - -  Form - - - //
   const onFinish = values => {
@@ -203,14 +188,24 @@ export default function List () {
       }
    }
 
-   // <- Displays GET data according to Ants Menu Component -> // 
+   // <- Displays menu data according to Ants Menu Component -> // 
    function buildMenuItems(folders, subList) {
+
+    // * Map through all folders  * // 
     return folders.map(folder => {
+       // * * * Define sublists that belong to the current folder * * * // 
       const folderSubLists = subList.filter(sub => sub.folderId === folder.id);
+       // * * * Define creating subList folder for the current folder  * * * // 
       const isCreating = creatingSubListForFolder === folder.id;
       
+
+       // * Define subList menu using Ants Menu Component * // 
       const children = [
+
+        // * * * Map through subList under spceific folder * * * // 
         ...folderSubLists.map(sub => ({
+
+           // * * * Display subList name and delete icon * * * // 
           key: sub.id,
           label: (
             <div
@@ -232,22 +227,34 @@ export default function List () {
               />
             </div>
           ),
+
+          // * * * Navigate to reminders page on subList click * * * // 
           onClick: () => navigate(`/sublist/${sub.id}`),
         })),
-        // Add "+ Add sublist" trigger button below the last sublist
+
+
+        
+        // * Initiate create a subList function * // 
+
+        // * * * Show Plus Circle Icon if no creating * * * // 
         ...(isCreating ? [] : [{
           key: `add-sublist-${folder.id}`,
           label: (<PlusCircleOutlined className="plus-icon" />),
+          
+        // * * * Click function on Plus Circle Icon * * * // 
           onClick: ({ domEvent }) => {
+
+             // * * * * * Bug Protection * * * * * // 
             if (domEvent) {
               domEvent.stopPropagation();
             }
-            console.log("folder.id =", folder.id, typeof folder.id);
-            // Open the folder if it's not already open
+           
+              // * * * * * Open Folder if not already opn * * * * * // 
             setOpenKeys(prev =>
               prev.includes(folder.id) ? prev : [...prev, folder.id]
             );
             
+             // * * * * * Create subList mode / Prepare to create subList * * * * * // 
             setCreatingSubListForFolder(folder.id);
             setNewSubListName("");
             enterPressedRef.current = false;
@@ -256,8 +263,10 @@ export default function List () {
           
         }]),
 
-        // Add input field for creating new sublist if this folder is in create mode
+        // * Create a subList function * // 
         ...(isCreating ? [{
+
+        // * * * Show Input to create a subList * * * // 
           key: `create-${folder.id}`,
           label: (
             <Input 
@@ -274,19 +283,24 @@ export default function List () {
                   handleCancelSubList();
                 }
               }}
+
+              // * Input isn't focused function * // 
               onBlur={(e) => {
-                // Use setTimeout to allow onPressEnter to set the ref first
                 setTimeout(() => {
-                  // Only cancel if Enter was not pressed
+
+               // * * * Only cancel if the blur wasn't caused by pressing Enter * * * // 
                   if (!enterPressedRef.current) {
                     handleCancelSubList();
                   }
                 }, 0);
               }}
               autoFocus
+
+                // * * * Bug Protection * * * // 
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => {
-                // Reset ref if user presses any key other than Enter
+
+                // * * * Confirm enter wasn't presed so it can be pressed again * * * // 
                 if (e.key !== 'Enter') {
                   enterPressedRef.current = false;
                 }
@@ -296,12 +310,18 @@ export default function List () {
         }] : [])
       ];
 
+
+
+      // * Display folder menu using Ants Menu Component * // 
       return {
         key: String(folder.id),
         label: (
+
+          // * * * Display folder name * * * // 
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>{folder.name}</span>
       
+            // * * * Display delete icon * * * // 
             <DeleteOutlined
               onClick={(e) => {
                 e.stopPropagation();
@@ -311,6 +331,8 @@ export default function List () {
             />
           </div>
         ),
+
+        // * * * Display subList menu * * * // 
         children: children.length > 0 ? children : undefined,
       };
     });
