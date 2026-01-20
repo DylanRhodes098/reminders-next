@@ -28,7 +28,7 @@ export default function Reminders () {
 
     // - - -  GlobalUses - - - //
     const navigate = useNavigate();
-    const { xxl } = useResponsive();
+ 
     const { subListId } = useParams();
     // <- useParams reads the current URL, allowing you to identify what data should be displayed. 
 
@@ -161,7 +161,7 @@ export default function Reminders () {
             ...(isCreating ? [{
               key: `create-${folder.id}`,
               label: (
-                <div>
+                <div style={{ width: "100%", padding: "8px 0" }}>
                   <Input
                     placeholder="New reminder"
                     bordered={false}

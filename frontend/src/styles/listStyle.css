@@ -19,3 +19,16 @@
 .plus-icon:hover {
   color: #1890ff !important;
 }
+
+.ant-menu .ant-menu-item,
+.ant-menu .ant-menu-submenu-title {
+  height: auto !important;
+  line-height: normal !important;
+  white-space: normal !important;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.ant-menu .ant-menu-title-content {
+  overflow: visible;
+}

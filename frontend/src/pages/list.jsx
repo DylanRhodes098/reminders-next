@@ -90,16 +90,6 @@ export default function List () {
 
     // <- Example =  const data = await listSubList(); setSubList(data);. 
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    // <- Starts isModalOpen as a boolean, and gives you the ability to update the isModalOpen boolean using setIsModalOpen.
-
-    // <- Example =  setIsModalOpen(true);. 
-
-    const [modalType, setModalType] = useState(null);
-    // <- Starts modalType as nothing, giving you the option to update as anything you like. 
-
-    // <- Example =  modalType === 'folder'. 
-
     const [creatingSubListForFolder, setCreatingSubListForFolder] = useState(null);
     // <- Tracks which folder is in "create sublist" mode
 
@@ -126,7 +116,7 @@ export default function List () {
 
 
 
-  // - - -  onClick Functions - - - //
+  // onClick Functions //
   const onClickHome = (e) => {
     // Cancel sublist creation if clicking on a menu item (not the input or add button)
     if (
@@ -156,6 +146,8 @@ export default function List () {
   // - - -  Backend Functions - - - //
 
   // GET Data //
+
+  // * * * Retrieve list data from database * * * // 
      async function retrieveList () {
         setErr("");
         try {
@@ -166,6 +158,7 @@ export default function List () {
         }
      }
 
+     // * * * Retrieve folder data from database * * * // 
      async function retrieveFolder () {
         setErr("");
         try{
@@ -177,6 +170,7 @@ export default function List () {
         }
      }
 
+     // * * * Retrieve subList data from database * * * // 
      async function retrieveSubList () {
       setErr("");
       try{
@@ -187,6 +181,8 @@ export default function List () {
           setErr(error?.response?.data?.error || "failed retrieving folders");
       }
    }
+
+
 
    // <- Displays menu data according to Ants Menu Component -> // 
    function buildMenuItems(folders, subList) {
@@ -321,7 +317,7 @@ export default function List () {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>{folder.name}</span>
       
-            // * * * Display delete icon * * * // 
+            
             <DeleteOutlined
               onClick={(e) => {
                 e.stopPropagation();
@@ -340,45 +336,81 @@ export default function List () {
 
    // POST Data //
 
-  // <- POSTS new folder according to Ants Form Component -> // 
-     const onFinishCreateFolder = async (values) => {
-      setErr("");
-      try {
-        const data = await createFolderApi({ name: values.name });
-    
-        setFolder(current => [...current, data]);
-    
-        folderForm.resetFields();   // ✅ reset inputs
-        setIsModalOpen(false);      // ✅ close modal
-      } catch (error) {
-        setErr(error?.response?.data?.error || "failed creating folder");
-      }
-    };
+  // <- Add new folder to database -> //
+  const handleCreateFolderInline = async () => {
+    setErr("");
 
-  // <- POSTS new sublist -> //
+    // * * * Cancels Input if nothing was types * * * // 
+    if (!newFolderName.trim()) {
+      handleCancelCreateFolder();
+      return;
+    }
+  
+    try {
+
+      // * * * Create and add data to database * * * //
+      const data = await createFolderApi({ name: newFolderName.trim() });
+      setFolder(current => [...current, data]);
+
+      // * * * Close Input and reset values * * * // 
+      setCreatingFolder(false);
+      setNewFolderName("");
+      enterPressedRef.current = false;
+
+      // * * * Error handling * * * // 
+    } catch (error) {
+      console.error("Failed creating folder:", error);
+      setErr(
+        error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        "Failed creating folder"
+      );
+      enterPressedRef.current = false;
+    }
+  };
+
+  // * * * Define cancel Input field * * * // 
+  const handleCancelCreateFolder = () => {
+    setCreatingFolder(false);
+    setNewFolderName("");
+    enterPressedRef.current = false;
+  };
+
+  // <- Add new sublist to database -> //
     const handleCreateSubList = async (folderId) => {
+
+      // * * * Cancel Input if nothing was typed * * * // 
       setErr("");
       if (!newSubListName.trim()) {
         handleCancelSubList();
         return;
       }
+
+      // * * * Cancel Input if folder is missing * * * // 
       if (!folderId) {
         setErr("Folder ID is missing");
         handleCancelSubList();
         return;
       }
       try {
+
+        // * * * Navigate to folder id  * * * //
         const payload = { 
           name: newSubListName.trim(), 
           folderId: folderId 
         };
         console.log("Creating sublist with payload:", payload);
+
+        // * * * Create and add data to database * * * //
         const data = await createSubList(payload);
-    
         setSubList(current => [...current, data]);
+
+        // * * * Close Input and reset values * * * // 
         setCreatingSubListForFolder(null);
         setNewSubListName("");
         enterPressedRef.current = false;
+
+        // * * * Error handling * * * // 
       } catch (error) {
         console.error("Error creating sublist:", error);
         console.error("Error response:", error?.response?.data);
@@ -392,62 +424,34 @@ export default function List () {
       }
     };
 
+    // * * * Define cancel Input field * * * // 
     const handleCancelSubList = () => {
       setCreatingSubListForFolder(null);
       setNewSubListName("");
       enterPressedRef.current = false;
     };
 
-    const handleCreateFolderInline = async () => {
-      setErr("");
-    
-      if (!newFolderName.trim()) {
-        handleCancelCreateFolder();
-        return;
-      }
-    
-      try {
-        const data = await createFolderApi({ name: newFolderName.trim() });
-    
-        setFolder(current => [...current, data]);
-        setCreatingFolder(false);
-        setNewFolderName("");
-        enterPressedRef.current = false;
-      } catch (error) {
-        console.error("Failed creating folder:", error);
-        setErr(
-          error?.response?.data?.error ||
-          error?.response?.data?.message ||
-          "Failed creating folder"
-        );
-        enterPressedRef.current = false;
-      }
-    };
 
-    const handleCancelCreateFolder = () => {
-      setCreatingFolder(false);
-      setNewFolderName("");
-      enterPressedRef.current = false;
-    };
-    
 
     // DELETE Data //
 
-    // <- DELETEs sublist -> //
+    // <- DELETE sublist -> //
     const handleDeleteSubList = async (subListId) => {
       setErr("");
     
       try {
+
+        // * * * Delete sublist from database * * * // 
         await deleteSubList(subListId);
-    
-        // Remove sublist from state
-        setSubList(current =>
+
+        // * * * Navigate the subList Id and Delete sublist from frontend * * * // 
+setSubList(current =>
           current.filter(sub => sub.id !== subListId)
         );
     
-        // Optional: navigate away if user is on this sublist
         navigate("/");
     
+        // * * * Error handling * * * // 
       } catch (error) {
         console.error("Failed deleting sublist:", error);
         setErr(
@@ -463,25 +467,28 @@ export default function List () {
       setErr("");
     
       try {
+
+        // * * * Delete folder from database * * * // 
         await deleteFolder(folderId);
     
-        // Remove folder
+        // * * * Navigate the folder Id and Delete folder from frontend * * * // 
         setFolder(current =>
           current.filter(folder => folder.id !== folderId)
         );
     
-        // Remove all sublists under this folder
+        // * * * Delete all sublists under this folder * * * // 
         setSubList(current =>
           current.filter(sub => sub.folderId !== folderId)
         );
     
-        // Close menu section if open
+        // * * * Close menu adter delete * * * // 
         setOpenKeys(current =>
           current.filter(key => key !== folderId)
         );
     
         navigate("/");
     
+        // * * * Error handling * * * // 
       } catch (error) {
         console.error("Failed deleting folder:", error);
         setErr(
@@ -494,7 +501,7 @@ export default function List () {
     
 
 
-     // - - -  Other - - - //
+        // useEffect //
      useEffect (() => {
         (async () => {
             await retrieveList();
@@ -503,9 +510,9 @@ export default function List () {
         })(); 
     }, []);
 
-    // <- useEffect renders data when the page first loads. 
+    // <- useEffect renders data when the page first loads -> //
 
-    // <- The [] stops infinite rendering. 
+    // <- The [] stops infinite rendering -> //
 
      function warningMessage () {
         if (!err) {
@@ -574,70 +581,6 @@ export default function List () {
   onClick={handleCreateFolderClick}
   className="plus-icon hover:bg-gray-100 rounded-md p-2"
 />
-
-
-<Modal
-  open={isModalOpen}
-  footer={null}
-  onCancel={handleCancel}
->
-  {modalType === 'folder' && <div>
-    <Form
-    name="basic"
-    form={folderForm}
-    labelCol={{ span: 8 }}
-    wrapperCol={{ span: 16 }}
-    style={{ maxWidth: 600 }}
-    initialValues={{ remember: true }}
-    onFinish={onFinishCreateFolder}
-    onFinishFailed={onFinishFailed}
-    layout="vertical"
-    autoComplete="off"
-  >
-    <Form.Item
-      label="Folder Name"
-     name="name"
-      rules={[{ required: true, message: 'Please input the name!' }]}
-    >
-      <Input />
-    </Form.Item>
-    <Form.Item>
-  <Button type="primary" htmlType="submit">
-    Create Folder
-  </Button>
-</Form.Item>
-    </Form>
-    </div>}
-  {modalType === 'list' && <div>
-    <Form
-    name="basic"
-    form={folderForm}
-    labelCol={{ span: 8 }}
-    wrapperCol={{ span: 16 }}
-    style={{ maxWidth: 600 }}
-    initialValues={{ remember: true }}
-    onFinish={onFinish}
-    onFinishFailed={onFinishFailed}
-    layout="vertical"
-    autoComplete="off"
-  >
-    <Form.Item
-      label="List Name"
-      name="name"
-      rules={[{ required: true, message: 'Please input the name!' }]}
-    >
-      <Input />
-    </Form.Item>
-    <Form.Item>
-  <Button type="primary" htmlType="submit">
-    Create List
-  </Button>
-  <DeleteOutlined className="delete-icon" />
-</Form.Item>
-    </Form>
-    </div>}
-    <DeleteOutlined className="delete-icon" />
-</Modal>
    
                 </div>
         </>
