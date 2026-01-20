@@ -2,6 +2,7 @@
 import sequelize from "../lib/db.js";
 
 import {Model, DataTypes} from "sequelize";
+import { randomUUID } from "crypto";
 
 export class Reminders extends Model {}
 
@@ -54,17 +55,7 @@ Reminders.init ({
       isUUID: 4,
     },
   },
-
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
+  // createdAt and updatedAt are handled automatically by timestamps: true
 },
           {
             sequelize,
@@ -73,6 +64,14 @@ Reminders.init ({
             freezeTableName: true,
             timestamps: true,
             underscored: false,
+            hooks: {
+              beforeCreate: async (reminder) => {
+                // Generate UUID if not provided (for MySQL compatibility)
+                if (!reminder.id) {
+                  reminder.id = randomUUID();
+                }
+              }
+            }
           }
         );
     

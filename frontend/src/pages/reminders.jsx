@@ -12,7 +12,7 @@ import { listReminderFolder, createReminderFolder,deleteReminderFolder } from ".
 // - - -  UI Components - - - //
 import { DatePicker, Button, Dropdown, Space, Modal, Card, Menu, Checkbox, Form, Input, ConfigProvider, Flex, Divider, TimePicker} from 'antd';
 import { useResponsive } from 'antd-style';
-import { PlusCircleOutlined, DeleteOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined, DeleteOutlined, InfoCircleOutlined} from "@ant-design/icons";
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
@@ -52,6 +52,12 @@ export default function Reminders () {
 
     const enterPressedRef = useRef(false);
 
+    const ignoreBlurRef = useRef(false);
+
+    const reminderInputRef = useRef(null);
+
+    const editInputRef = useRef(null);
+
 
     // - - -  UseStates - - - //
     const [err, setErr] = useState("");
@@ -69,35 +75,13 @@ export default function Reminders () {
     const [openKeys, setOpenKeys] = useState([]);
     const [dateOpen, setDateOpen] = useState(false);
     const [timeOpen, setTimeOpen] = useState(false);
-   
-
-
-    // - - -  Modal - - - //
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleMenuClick = ({ key }) => {
-    setModalType(key);
-    showModal(); // your existing function
-  };
-
-
-
-  // - - -  Form - - - //
-  const onFinish = values => {
-    console.log('Success:', values);
-  };
-  const onFinishFailed = errorInfo => {
-    console.log('Failed:', errorInfo);
-  };
-
+    const [editingReminderId, setEditingReminderId] = useState(null);
+const [editReminderText, setEditReminderText] = useState("");
+const [editReminderDate, setEditReminderDate] = useState(null);
+const [editReminderTime, setEditReminderTime] = useState(null);
+const [editDateOpen, setEditDateOpen] = useState(false);
+const [editTimeOpen, setEditTimeOpen] = useState(false);
+  
 
 
   // - - -  onClick Functions - - - //
@@ -110,6 +94,50 @@ export default function Reminders () {
       navigate(path); // 👈 navigate
     }
   };
+
+  const armIgnoreBlur = () => {
+    ignoreBlurRef.current = true;
+    // release after the click/open sequence settles
+    setTimeout(() => {
+      ignoreBlurRef.current = false;
+    }, 200);
+  };
+
+  const resetCreateReminderRow = (folderId) => {
+    setCreatingReminderForFolder(folderId); // keep it open
+    setNewReminderText("");
+    setNewReminderDate(null);
+    setNewReminderTime(null);
+    setDateOpen(false);
+    setTimeOpen(false);
+    enterPressedRef.current = false;
+  
+    // refocus after state updates
+    setTimeout(() => {
+      reminderInputRef.current?.focus?.();
+    }, 0);
+  };
+
+  const startEditingReminder = (reminder) => {
+    setEditingReminderId(reminder.id);
+    setEditReminderText(reminder.note || "");
+    setEditReminderDate(reminder.date_of_reminder ? dayjs(reminder.date_of_reminder) : null);
+    setEditReminderTime(reminder.date_of_reminder ? dayjs(reminder.date_of_reminder) : null);
+    setEditDateOpen(false);
+    setEditTimeOpen(false);
+  
+    setTimeout(() => editInputRef.current?.focus?.(), 0);
+  };
+  
+  const cancelEditingReminder = () => {
+    setEditingReminderId(null);
+    setEditReminderText("");
+    setEditReminderDate(null);
+    setEditReminderTime(null);
+    setEditDateOpen(false);
+    setEditTimeOpen(false);
+  };
+  
 
   // - - -  Backend Functions - - - //
 
@@ -138,6 +166,11 @@ export default function Reminders () {
               label: (
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span>{reminder.note}</span>
+                  <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+                  <span style={{ padding: '0 10px', color: "#9ca3af" }}>
+                  {dayjs(reminder.date_of_reminder).format("DD/MM/YYYY")}</span>
+                  <span style={{ padding: '0 10px', color: "#9ca3af" }}>{dayjs(reminder.date_of_reminder).format("HH:mm")}</span>
+                  <InfoCircleOutlined className="info-icon" />
                   <DeleteOutlined
                     className="delete-icon"
                     onClick={(e) => {
@@ -146,6 +179,7 @@ export default function Reminders () {
                     }}
                     style={{ color: "#ff4d4f" }}
                   />
+                  </div>
                 </div>
               )
             })),
@@ -169,6 +203,7 @@ export default function Reminders () {
               label: (
                 <div ref={createRowRef} style={{ width: "100%", padding: "8px 0" }}>
                   <Input
+               ref={reminderInputRef}
                     placeholder="New reminder"
                     bordered={false}
                     autoFocus
@@ -187,9 +222,10 @@ export default function Reminders () {
                     }}
                     onBlur={() => {
                       setTimeout(() => {
-                        if (dateOpen || timeOpen) return;       // don’t cancel while picker is open
+                        if (ignoreBlurRef.current) return;
+                        if (dateOpen || timeOpen) return;
                         if (!enterPressedRef.current) handleCancelCreateReminder();
-                      }, 200);
+                      }, 0);
                     }}
                     onKeyDown={e => {
                       if (e.key !== "Enter") {
@@ -210,11 +246,20 @@ export default function Reminders () {
   value={newReminderDate}
   onChange={setNewReminderDate}
   getPopupContainer={() => document.body}
-  popupClassName="reminder-picker-popup"
-  onMouseDown={(e) => e.preventDefault()}
-  style={{ width: 120 }}
   open={dateOpen}
-  onOpenChange={setDateOpen}
+  onOpenChange={(open) => {
+    setDateOpen(open);
+    if (open) armIgnoreBlur();
+  }}
+  onMouseDown={(e) => {
+    e.preventDefault();     // keep Input from losing focus immediately
+    e.stopPropagation();    // keep Menu from treating it like a menu click
+    armIgnoreBlur();        // IMPORTANT: prevents your blur cancel
+    setDateOpen(true);      // open explicitly
+  }}
+  style={{ width: 120 }}
+  // updated styling API below
+  classNames={{ popup: { root: "reminder-picker-popup" } }}
 />
 
 <TimePicker
@@ -223,12 +268,21 @@ export default function Reminders () {
   onChange={setNewReminderTime}
   format="HH:mm"
   getPopupContainer={() => document.body}
-  popupClassName="reminder-picker-popup"
-  onMouseDown={(e) => e.preventDefault()}
-  style={{ width: 100 }}
   open={timeOpen}
-  onOpenChange={setTimeOpen}
+  onOpenChange={(open) => {
+    setTimeOpen(open);
+    if (open) armIgnoreBlur();
+  }}
+  onMouseDown={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    armIgnoreBlur();
+    setTimeOpen(true);
+  }}
+  style={{ width: 100 }}
+  classNames={{ popup: { root: "reminder-picker-popup" } }}
 />
+
                   </div>
                 </div>
               )
@@ -346,7 +400,7 @@ export default function Reminders () {
             console.log("Updated reminders state:", updated);
             return updated;
           });
-          handleCancelCreateReminder();
+          resetCreateReminderRow(folderId); // 👈 ready to create another
         } else {
           console.error("Invalid reminder data received:", data);
           setErr("Failed to create reminder: Invalid response");

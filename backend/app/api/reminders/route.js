@@ -53,22 +53,52 @@ export async function POST(req) {
     const parsed = remindersCreate.safeParse(body);
 
     if (!parsed.success) {
-        return NextResponse.json({ error: "Missing fields", message: parsed.error.format() }, { status: 400 });
+        console.error("Validation failed:", JSON.stringify(parsed.error.format(), null, 2));
+        console.error("Validation errors:", parsed.error.errors);
+        return NextResponse.json({ 
+          error: "Validation failed", 
+          message: parsed.error.format(),
+          details: parsed.error.errors 
+        }, { status: 400 });
       }
+      
+      // Prepare data for creation - exclude undefined/null date_of_reminder
+      const createData = {
+        note: parsed.data.note,
+        reminderFolderId: parsed.data.reminderFolderId,
+        subListId: parsed.data.subListId,
+      };
+      
+      // Only include date_of_reminder if it's actually provided and valid
+      if (parsed.data.date_of_reminder !== undefined && parsed.data.date_of_reminder !== null) {
+        // Ensure it's a valid Date object or ISO string
+        if (parsed.data.date_of_reminder instanceof Date) {
+          createData.date_of_reminder = parsed.data.date_of_reminder;
+        } else if (typeof parsed.data.date_of_reminder === 'string') {
+          createData.date_of_reminder = new Date(parsed.data.date_of_reminder);
+        } else {
+          createData.date_of_reminder = parsed.data.date_of_reminder;
+        }
+      }
+      
+      console.log("Creating reminder with data:", createData);
          
-      const createReminder = await Reminders.create(parsed.data, {
-        fields: ["note", "reminderFolderId", "subListId", "date_of_reminder"], // whitelist
-      });
+      // Sequelize will automatically handle createdAt and updatedAt with timestamps: true
+      const createReminder = await Reminders.create(createData);
+      
+      console.log("Reminder created successfully:", createReminder.toJSON());
         
         return NextResponse.json(createReminder, { status: 200 });
 
         
     } catch (err) {
+        console.error("Error creating reminder:", err);
+        console.error("Error details:", err.parent?.sqlMessage || err.message);
         const msg =
         process.env.NODE_ENV === "development"
           ? err.parent?.sqlMessage || err.message
           : "Error retrieving";
-        return NextResponse.json(msg, { error: "failed creating" }, { status: 400 });
+        return NextResponse.json({ error: "failed creating", message: msg }, { status: 400 });
     }
 }
 

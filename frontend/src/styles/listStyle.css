@@ -20,6 +20,16 @@
   color: #1890ff !important;
 }
 
+.info-icon {
+  color: black;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.info-icon:hover {
+  color: #1890ff !important;
+}
+
 .ant-menu .ant-menu-item,
 .ant-menu .ant-menu-submenu-title {
   height: auto !important;
