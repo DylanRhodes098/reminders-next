@@ -48,6 +48,10 @@ export default function Reminders () {
 
     // <- Example = <TextArea rows={4} />. 
 
+    const createRowRef = useRef(null);
+
+    const enterPressedRef = useRef(false);
+
 
     // - - -  UseStates - - - //
     const [err, setErr] = useState("");
@@ -63,7 +67,9 @@ export default function Reminders () {
     const [newReminderDate, setNewReminderDate] = useState(null);
     const [newReminderTime, setNewReminderTime] = useState(null);
     const [openKeys, setOpenKeys] = useState([]);
-    const enterPressedRef = useRef(false);
+    const [dateOpen, setDateOpen] = useState(false);
+    const [timeOpen, setTimeOpen] = useState(false);
+   
 
 
     // - - -  Modal - - - //
@@ -161,7 +167,7 @@ export default function Reminders () {
             ...(isCreating ? [{
               key: `create-${folder.id}`,
               label: (
-                <div style={{ width: "100%", padding: "8px 0" }}>
+                <div ref={createRowRef} style={{ width: "100%", padding: "8px 0" }}>
                   <Input
                     placeholder="New reminder"
                     bordered={false}
@@ -169,7 +175,9 @@ export default function Reminders () {
                     value={newReminderText}
                     onChange={e => setNewReminderText(e.target.value)}
                     onPressEnter={async (e) => {
-                      e.stopPropagation();
+                      if (e && e.stopPropagation) {
+                        e.stopPropagation();
+                      }
                       enterPressedRef.current = true;
                       if (newReminderText.trim()) {
                         await handleCreateReminder(folder.id);
@@ -179,32 +187,48 @@ export default function Reminders () {
                     }}
                     onBlur={() => {
                       setTimeout(() => {
-                        if (!enterPressedRef.current) {
-                          handleCancelCreateReminder();
-                        }
-                      }, 0);
+                        if (dateOpen || timeOpen) return;       // don’t cancel while picker is open
+                        if (!enterPressedRef.current) handleCancelCreateReminder();
+                      }, 200);
                     }}
                     onKeyDown={e => {
-                      if (e.key !== "Enter") enterPressedRef.current = false;
+                      if (e.key !== "Enter") {
+                        enterPressedRef.current = false;
+                      } else {
+                        enterPressedRef.current = true;
+                      }
                     }}
-                    onClick={e => e.stopPropagation()}
+                    onClick={e => {
+                      if (e && e.stopPropagation) {
+                        e.stopPropagation();
+                      }
+                    }}
                   />
                   <div style={{ marginTop: "8px", display: "flex", gap: "8px" }}>
-                    <DatePicker
-                      placeholder="Date"
-                      value={newReminderDate}
-                      onChange={(date) => setNewReminderDate(date)}
-                      onClick={e => e.stopPropagation()}
-                      style={{ width: "120px" }}
-                    />
-                    <TimePicker
-                      placeholder="Time"
-                      value={newReminderTime}
-                      onChange={(time) => setNewReminderTime(time)}
-                      format="HH:mm"
-                      onClick={e => e.stopPropagation()}
-                      style={{ width: "100px" }}
-                    />
+                  <DatePicker
+  placeholder="Date"
+  value={newReminderDate}
+  onChange={setNewReminderDate}
+  getPopupContainer={() => document.body}
+  popupClassName="reminder-picker-popup"
+  onMouseDown={(e) => e.preventDefault()}
+  style={{ width: 120 }}
+  open={dateOpen}
+  onOpenChange={setDateOpen}
+/>
+
+<TimePicker
+  placeholder="Time"
+  value={newReminderTime}
+  onChange={setNewReminderTime}
+  format="HH:mm"
+  getPopupContainer={() => document.body}
+  popupClassName="reminder-picker-popup"
+  onMouseDown={(e) => e.preventDefault()}
+  style={{ width: 100 }}
+  open={timeOpen}
+  onOpenChange={setTimeOpen}
+/>
                   </div>
                 </div>
               )
@@ -268,7 +292,10 @@ export default function Reminders () {
 
     // <- Create Reminder ->//
     const handleCreateReminder = async (folderId) => {
-      if (!newReminderText.trim()) return handleCancelCreateReminder();
+      if (!newReminderText.trim()) {
+        handleCancelCreateReminder();
+        return;
+      }
       if (!subListId) {
         setErr("Missing subListId");
         return;
@@ -308,10 +335,22 @@ export default function Reminders () {
           payload.date_of_reminder = dateOfReminder;
         }
 
+        console.log("Creating reminder with payload:", payload);
         const data = await createReminders(payload);
+        console.log("Reminder created successfully:", data);
     
-        setReminders(prev => [...prev, data]);
-        handleCancelCreateReminder();
+        // Ensure we have valid data before updating state
+        if (data && data.id) {
+          setReminders(prev => {
+            const updated = [...prev, data];
+            console.log("Updated reminders state:", updated);
+            return updated;
+          });
+          handleCancelCreateReminder();
+        } else {
+          console.error("Invalid reminder data received:", data);
+          setErr("Failed to create reminder: Invalid response");
+        }
       } catch (e) {
         console.error("Error creating reminder:", e);
         console.error("Error response:", e?.response?.data);
@@ -321,6 +360,8 @@ export default function Reminders () {
           return;
         }
         setErr(e?.response?.data?.error || e?.response?.data?.message || "Failed creating reminder");
+        // Reset the ref on error so user can try again
+        enterPressedRef.current = false;
       }
     };
     

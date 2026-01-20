@@ -3,7 +3,7 @@
 
 // Import tools //
 import { NextResponse } from "next/server";
-import { remindersCreate } from "../../../validation/reminders";
+import { remindersCreate, remindersDelete, remindersUpdate } from "../../../validation/reminders";
 
 
 // Import model files //
@@ -46,16 +46,23 @@ export async function GET(req) {
 export async function POST(req) {
     try {
     const body = await req.json();
+
+    console.log("POST /reminders body keys:", Object.keys(body));
+    console.log("POST /reminders body:", body);
+    
     const parsed = remindersCreate.safeParse(body);
 
     if (!parsed.success) {
         return NextResponse.json({ error: "Missing fields", message: parsed.error.format() }, { status: 400 });
       }
          
-      const createReminder = await Reminders.create(parsed.data);
+      const createReminder = await Reminders.create(parsed.data, {
+        fields: ["note", "reminderFolderId", "subListId", "date_of_reminder"], // whitelist
+      });
         
         return NextResponse.json(createReminder, { status: 200 });
 
+        
     } catch (err) {
         const msg =
         process.env.NODE_ENV === "development"
@@ -111,5 +118,40 @@ export async function PUT(req) {
       );
     }
   }
+
+  export async function DELETE(req) {
+    try {
+      const { searchParams } = new URL(req.url);
+      const id = searchParams.get("id");
+  
+      const parsed = remindersDelete.safeParse({ id });
+  
+      if (!parsed.success) {
+        return NextResponse.json(
+          { error: "Missing/invalid id", details: parsed.error.format() },
+          { status: 400 }
+        );
+      }
+  
+      const deletedCount = await Reminders.destroy({
+        where: { id: parsed.data.id },
+      });
+  
+      if (deletedCount === 0) {
+        return NextResponse.json({ error: "Reminder not found" }, { status: 404 });
+      }
+  
+      return NextResponse.json({ message: "Deleted", id: parsed.data.id }, { status: 200 });
+    } catch (err) {
+      const msg =
+        process.env.NODE_ENV === "development"
+          ? err?.parent?.sqlMessage || err?.message
+          : "Error deleting reminder";
+  
+      return NextResponse.json({ error: "failed deleting", message: msg }, { status: 500 });
+    }
+  }
+  
+  
 
 export const dynamic = "force-dynamic"

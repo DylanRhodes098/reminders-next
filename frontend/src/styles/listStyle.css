@@ -32,3 +32,13 @@
 .ant-menu .ant-menu-title-content {
   overflow: visible;
 }
+
+.reminder-picker-popup {
+  z-index: 9999 !important;
+}
+
+.ant-menu,
+.ant-menu-sub,
+.ant-menu-inline {
+  overflow: visible !important;
+}
