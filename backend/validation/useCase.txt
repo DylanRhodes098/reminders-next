@@ -4,3 +4,32 @@ Folder Definition : A line of defense that confirms the correct data is being se
 
 Zod Library Definition : Zod schemas define what a valid input looks like.
 
+Functions : 
+    Examples : 
+    /folder.js
+        export const folderCreate = z.object = object requires an object
+
+        folderCreate.partial(); = Partial turns off required on folderCreate. Keeps the rules, but makes inputs optional.
+        folderUpdate.extend({ id: z.string().uuid() }) = Extends adds fields to an existing object, by default zod sets fields as required.  
+        folderUpdate.refine = Refine adds functions to define specific rules.
+
+    /reminders.js
+        const optionalDate = z.preprocess = Expect raw data, normalize it, then define rules before accepting. 
+
+        remindersUpdate.omit({ subListId: true }) = Omit means replace a value of an existing field. In this case the sublist key. 
+
+
+
+
+
+
+    Types : 
+        .string() = Accept strings
+        .uuid() = Accept id
+        .min(1, x) = Accept atleast 1 character
+        .strict() = Only accept the previously deifned object values
+
+
+
+
+    

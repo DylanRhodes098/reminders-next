@@ -1,18 +1,92 @@
 import { z } from "zod";
 
-// Handle optional date - can be undefined, null, empty string, or a valid future date
+// POST Data //
+
+// - - - Only allow an object - - - //
+export const remindersCreate = z.object({
+
+  // - - - Content of Object - - - //
+    // - - - - - Required note needs to be string and min 1 charcter - - - - - //
+  note: z.string().min(1, "Note required"),
+
+      // - - - - - Value replicates optionalDate function - - - - - //
+  date_of_reminder: optionalDate,
+
+      // - - - - - Required Id needs tobe a string and valid uuid - - - - - //
+  reminderFolderId: z.string().uuid(),
+
+      // - - - - - Required subList Id needs tobe a string and valid uuid - - - - - //
+  subListId: z.string().uuid(),
+}).strict()
+
+// PUT Data //
+
+// - - - The following object is optional - - - //
+export const remindersUpdate = remindersCreate
+  .partial()
+
+  // - - - Replace the sublist key with true - - - //
+  .omit({ subListId: true });
+
+  // - - - Add fields to remindersUpdate - - - //
+export const remindersUpdateWithId = remindersUpdate
+
+// - - - Add Id field  - - - //
+  .extend({ id: z.string().uuid() })
+
+  // - - - Create a rule  - - - //
+  .refine((d) => {
+
+     // - - - If note is provided  - - - //
+    if (d.note !== undefined) return true;
+
+    // - - - If date is provided  - - - //
+    if (d.date_of_reminder !== undefined) return true;
+
+    // - - - If both are false, return a no field to update message  - - - //
+    return false;
+  }, { message: "No fields to update" });
+
+// PUT Data //
+
+// - - - Delete reminder id  - - - //
+export const remindersDelete = z.object({
+  id: z.string().uuid(),
+});
+
+
+// PUT Data //
+
+// - - - The following object is optional to delete - - - //
+export const optionalRemindersDelete = remindersDelete.partial();
+
+// OTHER //
+
+// - - - The following object retrieves raw data to normalize - - - //
 const optionalDate = z.preprocess(
+
+  // - - - Map through each field - - - //
   (v) => {
+
+    // - - - If field is null, undefined or an empty string, return null - - - //
     if (v === null || v === undefined || v === "") return null;
-    // If it's already a Date object, check if it's valid
+    
+    // - - - If value is a Date object but represents an invalid date, return null - - - //
     if (v instanceof Date && isNaN(v.getTime())) return null;
-    // If it's a string, try to parse it
+
+    // - - - If field is a string, translate it into a date - - - // 
     if (typeof v === "string") {
       const parsed = new Date(v);
+
+      // - - - If newly defined date is still not a valid date, return null - - - //
       if (isNaN(parsed.getTime())) return null;
+
+        // - - - Else return newly defined date  - - - //
       return parsed;
     }
+    // - - - If data prases all rules, return original data - - - //
     return v;
+
   },
   z.union([
     z.null(),
@@ -26,31 +100,6 @@ const optionalDate = z.preprocess(
     )
   ]).transform((val) => val === null ? undefined : val)
 ).optional();
-
-export const remindersCreate = z.object({
-  note: z.string().min(1, "Note required"),
-  date_of_reminder: optionalDate,
-  reminderFolderId: z.string().uuid(),
-  subListId: z.string().uuid(),
-}).strict()
-
-export const remindersUpdate = remindersCreate
-  .partial()
-  .omit({ subListId: true });
-
-export const remindersUpdateWithId = remindersUpdate
-  .extend({ id: z.string().uuid() })
-  .refine((d) => {
-    if (d.note !== undefined) return true;
-    if (d.date_of_reminder !== undefined) return true;
-    return false;
-  }, { message: "No fields to update" });
-
-export const remindersDelete = z.object({
-  id: z.string().uuid(),
-});
-
-export const optionalRemindersDelete = remindersDelete.partial();
 
 export default {
   remindersCreate,
