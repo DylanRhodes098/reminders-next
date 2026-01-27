@@ -1,0 +1,6 @@
+VALIDATION FOLDER
+
+Folder Definition : A line of defense that confirms the correct data is being sent to the backend. Like a bouncer at a club. 
+
+Zod Library Definition : Zod schemas define what a valid input looks like.
+

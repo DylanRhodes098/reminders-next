@@ -56,7 +56,7 @@ export async function POST(req) {
         console.error("Validation failed:", JSON.stringify(parsed.error.format(), null, 2));
         console.error("Validation errors:", parsed.error.errors);
         return NextResponse.json({ 
-          error: "Validation failed", 
+          error: "Date is in the passed", 
           message: parsed.error.format(),
           details: parsed.error.errors 
         }, { status: 400 });

@@ -19,6 +19,11 @@ export async function listReminders(subListId) {
     const { data } = await api.delete(`/reminders?id=${id}`);
     return data;
   }
+  
+  export async function updateReminders(id, payload) {
+    const { data } = await api.put("/reminders", { id, ...payload });
+    return data;
+  }
 
-
+  
 

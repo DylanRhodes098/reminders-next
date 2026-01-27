@@ -1,0 +1,30 @@
+DEPLOY SEQUENCE 
+
+/config/config.json = Reads DB Credentials
+↓
+/migrations = Creates DB and Tables on temrinal command
+↓
+/seeders = Inserts seeder data into DB
+↓
+/db/schema.sql = Confirms DB creation
+
+
+RUNTIME SEQUENCE 
+
+/app/api/route.js = The terminal where the data is shipped
+↓
+/validation = The termianl secuirty, confriming the data is valid
+↓
+/lib/auth.js = Passport secuirty, confriming data matches the user
+↓
+/models = Reads DB and updates data accordingly 
+↓
+/lib/db.js = Reads DB schema to confirm data is in the right place
+↓
+DB = Updates DB
+
+
+DEFINITIONS 
+
+Schema = Rules for the computer to read
+

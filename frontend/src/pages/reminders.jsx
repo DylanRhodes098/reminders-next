@@ -5,7 +5,7 @@ import React from 'react';
 import { useParams } from "react-router-dom";
 
 // - - -  Backend imports - - - //
-import  { listReminders, createReminders, deleteReminders } from "../services/reminders";
+import  { listReminders, createReminders, deleteReminders, updateReminders } from "../services/reminders";
 import { getSubListById } from "../services/subList";
 import { listReminderFolder, createReminderFolder,deleteReminderFolder } from "../services/reminderFolder";
 
@@ -142,35 +142,130 @@ const [editTimeOpen, setEditTimeOpen] = useState(false);
   // - - -  Backend Functions - - - //
 
   // GET Data //
-     function buildReminderItems(reminders) {
-
-      const remindersArray = Array.isArray(reminders) ? reminders : [];
-      return remindersArray.map(reminder => ({
-        key: reminder.id,
-        label: reminder.note,
-      }));
-    }
-
-       // <- Displays GET data according to Ants Menu Component -> // 
-       function buildMenuItems(folders, reminders) {
-        return folders.map(folder => {
-          const folderReminders = reminders.filter(
-            r => r.reminderFolderId === folder.id
-          );
-      
-          const isCreating = creatingReminderForFolder === folder.id;
-      
-          const children = [
-            ...folderReminders.map(reminder => ({
-              key: reminder.id,
-              label: (
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span>{reminder.note}</span>
-                  <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-                  <span style={{ padding: '0 10px', color: "#9ca3af" }}>
-                  {dayjs(reminder.date_of_reminder).format("DD/MM/YYYY")}</span>
-                  <span style={{ padding: '0 10px', color: "#9ca3af" }}>{dayjs(reminder.date_of_reminder).format("HH:mm")}</span>
+  function buildMenuItems(folders, reminders) {
+    return folders.map((folder) => {
+      const folderReminders = reminders.filter(
+        (r) => r.reminderFolderId === folder.id
+      );
+  
+      const isCreating = creatingReminderForFolder === folder.id;
+  
+      const children = [
+        // -------------------------
+        // Existing reminders (view + edit)
+        // -------------------------
+        ...folderReminders.map((reminder) => {
+          const isEditing = editingReminderId === reminder.id;
+  
+          return {
+            key: reminder.id,
+            label: isEditing ? (
+              <div
+                style={{ width: "100%", padding: "8px 0" }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Input
+                  ref={editInputRef}
+                  placeholder="Edit reminder"
+                  bordered={false}
+                  value={editReminderText}
+                  onChange={(e) => setEditReminderText(e.target.value)}
+                  onPressEnter={async (e) => {
+                    e.stopPropagation();
+                    if (!editReminderText.trim()) {
+                      cancelEditingReminder();
+                      return;
+                    }
+                    await handleUpdateReminder(reminder);
+                  }}
+                  onBlur={() => {
+                    setTimeout(() => {
+                      if (ignoreBlurRef.current) return;
+                      if (editDateOpen || editTimeOpen) return;
+                      cancelEditingReminder();
+                    }, 0);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+  
+                <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
+                  <DatePicker
+                    placeholder="Date"
+                    value={editReminderDate}
+                    onChange={setEditReminderDate}
+                    getPopupContainer={() => document.body}
+                    open={editDateOpen}
+                    onOpenChange={(open) => {
+                      setEditDateOpen(open);
+                      if (open) armIgnoreBlur();
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      armIgnoreBlur();
+                      setEditDateOpen(true);
+                    }}
+                    style={{ width: 120 }}
+                    classNames={{ popup: { root: "reminder-picker-popup" } }}
+                  />
+  
+                  <TimePicker
+                    placeholder="Time"
+                    value={editReminderTime}
+                    onChange={setEditReminderTime}
+                    format="HH:mm"
+                    getPopupContainer={() => document.body}
+                    open={editTimeOpen}
+                    onOpenChange={(open) => {
+                      setEditTimeOpen(open);
+                      if (open) armIgnoreBlur();
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      armIgnoreBlur();
+                      setEditTimeOpen(true);
+                    }}
+                    style={{ width: 100 }}
+                    classNames={{ popup: { root: "reminder-picker-popup" } }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  startEditingReminder(reminder);
+                }}
+              >
+                <span>{reminder.note}</span>
+  
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {reminder.date_of_reminder && (
+                    <>
+                      <span style={{ padding: "0 10px", color: "#9ca3af" }}>
+                        {dayjs(reminder.date_of_reminder).format("DD/MM/YYYY")}
+                      </span>
+                      <span style={{ padding: "0 10px", color: "#9ca3af" }}>
+                        {dayjs(reminder.date_of_reminder).format("HH:mm")}
+                      </span>
+                    </>
+                  )}
+  
                   <InfoCircleOutlined className="info-icon" />
+  
                   <DeleteOutlined
                     className="delete-icon"
                     onClick={(e) => {
@@ -179,135 +274,154 @@ const [editTimeOpen, setEditTimeOpen] = useState(false);
                     }}
                     style={{ color: "#ff4d4f" }}
                   />
-                  </div>
                 </div>
-              )
-            })),
-      
-            ...(isCreating ? [] : [{
-              key: `add-${folder.id}`,
-              label: <PlusCircleOutlined className="plus-icon" />,
-              onClick: ({ domEvent }) => {
-                domEvent.stopPropagation();
-                setOpenKeys(prev => [...new Set([...prev, folder.id])]);
-                setCreatingReminderForFolder(folder.id);
-                setNewReminderText("");
-                setNewReminderDate(null);
-                setNewReminderTime(null);
-                enterPressedRef.current = false;
-              }
-            }]),
-      
-            ...(isCreating ? [{
-              key: `create-${folder.id}`,
-              label: (
-                <div ref={createRowRef} style={{ width: "100%", padding: "8px 0" }}>
-                  <Input
-               ref={reminderInputRef}
-                    placeholder="New reminder"
-                    bordered={false}
-                    autoFocus
-                    value={newReminderText}
-                    onChange={e => setNewReminderText(e.target.value)}
-                    onPressEnter={async (e) => {
-                      if (e && e.stopPropagation) {
-                        e.stopPropagation();
-                      }
-                      enterPressedRef.current = true;
-                      if (newReminderText.trim()) {
-                        await handleCreateReminder(folder.id);
-                      } else {
-                        handleCancelCreateReminder();
-                      }
-                    }}
-                    onBlur={() => {
-                      setTimeout(() => {
-                        if (ignoreBlurRef.current) return;
-                        if (dateOpen || timeOpen) return;
-                        if (!enterPressedRef.current) handleCancelCreateReminder();
-                      }, 0);
-                    }}
-                    onKeyDown={e => {
-                      if (e.key !== "Enter") {
-                        enterPressedRef.current = false;
-                      } else {
-                        enterPressedRef.current = true;
-                      }
-                    }}
-                    onClick={e => {
-                      if (e && e.stopPropagation) {
-                        e.stopPropagation();
-                      }
-                    }}
-                  />
-                  <div style={{ marginTop: "8px", display: "flex", gap: "8px" }}>
-                  <DatePicker
-  placeholder="Date"
-  value={newReminderDate}
-  onChange={setNewReminderDate}
-  getPopupContainer={() => document.body}
-  open={dateOpen}
-  onOpenChange={(open) => {
-    setDateOpen(open);
-    if (open) armIgnoreBlur();
-  }}
-  onMouseDown={(e) => {
-    e.preventDefault();     // keep Input from losing focus immediately
-    e.stopPropagation();    // keep Menu from treating it like a menu click
-    armIgnoreBlur();        // IMPORTANT: prevents your blur cancel
-    setDateOpen(true);      // open explicitly
-  }}
-  style={{ width: 120 }}
-  // updated styling API below
-  classNames={{ popup: { root: "reminder-picker-popup" } }}
-/>
-
-<TimePicker
-  placeholder="Time"
-  value={newReminderTime}
-  onChange={setNewReminderTime}
-  format="HH:mm"
-  getPopupContainer={() => document.body}
-  open={timeOpen}
-  onOpenChange={(open) => {
-    setTimeOpen(open);
-    if (open) armIgnoreBlur();
-  }}
-  onMouseDown={(e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    armIgnoreBlur();
-    setTimeOpen(true);
-  }}
-  style={{ width: 100 }}
-  classNames={{ popup: { root: "reminder-picker-popup" } }}
-/>
-
-                  </div>
-                </div>
-              )
-            }] : [])
-          ];
-          return {
-            key: folder.id,
-            label: (
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>{folder.name}</span>
-                <DeleteOutlined
-                  className="delete-icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteReminderFolder(folder.id);
-                  }}
-                />
               </div>
             ),
-            children
           };
-        });
-      }      
+        }),
+  
+        // -------------------------
+        // Add (+) row (only if not creating)
+        // -------------------------
+        ...(isCreating
+          ? []
+          : [
+              {
+                key: `add-${folder.id}`,
+                label: <PlusCircleOutlined className="plus-icon" />,
+                onClick: ({ domEvent }) => {
+                  domEvent.stopPropagation();
+                  setOpenKeys((prev) => [...new Set([...prev, folder.id])]);
+                  setCreatingReminderForFolder(folder.id);
+  
+                  // Cancel any edit in progress
+                  cancelEditingReminder();
+  
+                  // Reset create fields
+                  setNewReminderText("");
+                  setNewReminderDate(null);
+                  setNewReminderTime(null);
+                  setDateOpen(false);
+                  setTimeOpen(false);
+                  enterPressedRef.current = false;
+                },
+              },
+            ]),
+  
+        // -------------------------
+        // Create row (input + date/time pickers)
+        // -------------------------
+        ...(isCreating
+          ? [
+              {
+                key: `create-${folder.id}`,
+                label: (
+                  <div ref={createRowRef} style={{ width: "100%", padding: "8px 0" }}>
+                    <Input
+                      placeholder="New reminder"
+                      bordered={false}
+                      autoFocus
+                      value={newReminderText}
+                      onChange={(e) => setNewReminderText(e.target.value)}
+                      onPressEnter={async (e) => {
+                        if (e?.stopPropagation) e.stopPropagation();
+                        enterPressedRef.current = true;
+  
+                        // Cancel any edit in progress
+                        cancelEditingReminder();
+  
+                        if (newReminderText.trim()) {
+                          await handleCreateReminder(folder.id);
+                        } else {
+                          handleCancelCreateReminder();
+                        }
+                      }}
+                      onBlur={() => {
+                        setTimeout(() => {
+                          if (ignoreBlurRef.current) return;
+                          if (dateOpen || timeOpen) return;
+                          if (!enterPressedRef.current) handleCancelCreateReminder();
+                        }, 0);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Enter") enterPressedRef.current = false;
+                        else enterPressedRef.current = true;
+                      }}
+                      onClick={(e) => {
+                        if (e?.stopPropagation) e.stopPropagation();
+                      }}
+                    />
+  
+                    <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
+                      <DatePicker
+                        placeholder="Date"
+                        value={newReminderDate}
+                        onChange={setNewReminderDate}
+                        getPopupContainer={() => document.body}
+                        open={dateOpen}
+                        onOpenChange={(open) => {
+                          setDateOpen(open);
+                          if (open) armIgnoreBlur();
+                        }}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          armIgnoreBlur();
+                          setDateOpen(true);
+                        }}
+                        style={{ width: 120 }}
+                        classNames={{ popup: { root: "reminder-picker-popup" } }}
+                      />
+  
+                      <TimePicker
+                        placeholder="Time"
+                        value={newReminderTime}
+                        onChange={setNewReminderTime}
+                        format="HH:mm"
+                        getPopupContainer={() => document.body}
+                        open={timeOpen}
+                        onOpenChange={(open) => {
+                          setTimeOpen(open);
+                          if (open) armIgnoreBlur();
+                        }}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          armIgnoreBlur();
+                          setTimeOpen(true);
+                        }}
+                        style={{ width: 100 }}
+                        classNames={{ popup: { root: "reminder-picker-popup" } }}
+                      />
+                    </div>
+                  </div>
+                ),
+              },
+            ]
+          : []),
+      ];
+  
+      return {
+        key: folder.id,
+        label: (
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span>{folder.name}</span>
+            <DeleteOutlined
+              className="delete-icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteReminderFolder(folder.id);
+              }}
+            />
+          </div>
+        ),
+        children,
+      };
+    });
+  }
+   
 
-    // PUT Data //
+    // POST Data //
 
     // <- Create Folder ->//
     const handleCreateReminderFolder = async () => {
@@ -426,6 +540,39 @@ const [editTimeOpen, setEditTimeOpen] = useState(false);
       setNewReminderTime(null);
       enterPressedRef.current = false;
     };
+
+    // PUT Data //
+
+    const handleUpdateReminder = async (reminder) => {
+      try {
+        // build date_of_reminder ISO if either picker set
+        let dateOfReminder = null;
+    
+        if (editReminderDate) {
+          const date = editReminderDate.toDate();
+          if (editReminderTime) {
+            const time = editReminderTime.toDate();
+            date.setHours(time.getHours(), time.getMinutes(), time.getSeconds(), 0);
+          }
+          dateOfReminder = date.toISOString();
+        }
+    
+        const payload = {
+          note: editReminderText.trim(),
+          // send null to clear date if you want that behavior:
+          date_of_reminder: dateOfReminder,
+        };
+    
+        const updated = await updateReminders(reminder.id, payload);
+    
+        setReminders(prev => prev.map(r => (r.id === reminder.id ? updated : r)));
+        cancelEditingReminder();
+      } catch (e) {
+        console.error("Error updating reminder:", e);
+        setErr(e?.response?.data?.error || e?.response?.data?.message || "Failed updating reminder");
+      }
+    };
+    
 
     // DELETE Data //
 

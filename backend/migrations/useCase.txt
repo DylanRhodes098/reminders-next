@@ -1,0 +1,4 @@
+MIGRATION FOLDER
+
+Migration Definition : The migration folder listens to your temrinal commands and creates DBs and tables accordingly. 
+
