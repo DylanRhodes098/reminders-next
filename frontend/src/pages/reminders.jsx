@@ -240,7 +240,7 @@ const [editTimeOpen, setEditTimeOpen] = useState(false);
         // < - Map through the reminders in the current folder - > //
         ...folderReminders.map((reminder) => {
 
-          // < - Cofirm the reminder is being edited.in editig mode. - > //
+          // < - Cofirm the reminder is being edited in editig mode. - > //
           const isEditing = editingReminderId === reminder.id;
   
           // < - UI For editing a reminder - > //
@@ -254,7 +254,7 @@ const [editTimeOpen, setEditTimeOpen] = useState(false);
       
               // < - Main div - > //
               <div
-                style={{ width: "100%", padding: "8px 0" }}
+                style={{ width: "100%", padding: "8px 0"}}
 
                 // < - Bug handler - > //
                 onClick={(e) => e.stopPropagation()}
@@ -1000,6 +1000,7 @@ const [editTimeOpen, setEditTimeOpen] = useState(false);
   mode="inline"
   openKeys={openKeys}
   onOpenChange={setOpenKeys}
+  style={{backgroundColor:"#d8f9ff" }}
   items={[
     ...buildMenuItems(reminderFolders, reminders),
     ...(creatingFolder ? [{

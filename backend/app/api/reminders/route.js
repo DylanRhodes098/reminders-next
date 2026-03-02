@@ -3,7 +3,7 @@
 
 // Import tools //
 import { NextResponse } from "next/server";
-import { remindersCreate, remindersDelete, remindersUpdate } from "../../../validation/reminders";
+import { remindersCreate, remindersDelete, remindersUpdate, remindersUpdateWithId} from "../../../validation/reminders";
 
 
 // Import model files //
@@ -116,7 +116,7 @@ export async function PUT(req) {
       // Luggage check //
 
       // Security check the data is valid //
-      const parsed = remindersUpdate.safeParse(body);
+      const parsed = remindersUpdateWithId.safeParse(body);
   
       // if secuirty check failed //
       if (!parsed.success) {
