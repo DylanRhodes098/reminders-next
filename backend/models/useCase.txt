@@ -1,0 +1,28 @@
+// - - - // - - - //
+// X = Title 
+// - - - // - - - //
+
+// - - - X - - - // = Heading 1 or subtitle
+
+// < - X - > // = NOTES
+
+// ‡ - ‡ ‡ - ‡ ‡ - ‡ //
+// X = COMMUNICATION STAGE (Attributes, Options)
+// ‡ - ‡ ‡ - ‡ ‡ - ‡ //
+
+// »« - »« »« - »« »« - »« //
+// X  = FUNCTION
+// »« - »« »« - »« »« - »« //
+
+// @ - @ @ - @ @ - @ //
+// X 
+// @ - @ @ - @ @ - @ // 
+
+// ! - ! X ! - ! // = CLARIFICAITON TEXT
+
+// * * * X * * * // = If statments
+
+// < * * X * * > // = else statments
+
+// < < * X * > > // = else if statments
+

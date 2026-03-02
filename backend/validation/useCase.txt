@@ -13,21 +13,33 @@ Functions :
         folderUpdate.extend({ id: z.string().uuid() }) = Extends adds fields to an existing object, by default zod sets fields as required.  
         folderUpdate.refine = Refine adds functions to define specific rules.
 
+
     /reminders.js
-        const optionalDate = z.preprocess = Expect raw data, normalize it, then define rules before accepting. 
+        export const optionalDate = z.preprocess = Expect raw data, normalize it, then define rules before accepting. 
 
         remindersUpdate.omit({ subListId: true }) = Omit means replace a value of an existing field. In this case the sublist key. 
+        z.union = The data is paarsed if atleast one of the schemas inside the array is true.
+        z.null() = Accept null values 
+        z.coerce.date = Force any datatype to be a date type
+        .transfrom() = If the data is allowed but needs changing first
 
 
-
-
-
-
-    Types : 
+    Methods : 
         .string() = Accept strings
         .uuid() = Accept id
         .min(1, x) = Accept atleast 1 character
-        .strict() = Only accept the previously deifned object values
+        .strict() = Only accept the previously deifned object value
+        .null() = Accept null values 
+        .transfrom() = If the data is allowed but needs changing first
+  
+
+    Properties : 
+        .coerce. = Force a datatype to be another type 
+
+
+    Array Methods : 
+        .union([]) = The data is paarsed if atleast one of the schemas inside the array is true.
+
 
 
 

@@ -1,0 +1,28 @@
+// - - - // - - - //
+// X = Title 
+// - - - // - - - //
+
+// - - - X - - - // = Heading 1 or subtitle
+
+// < - X - > // = NOTES
+
+// ‡ - ‡ ‡ - ‡ ‡ - ‡ //
+// X = COMMUNICATION STAGE (Walk, Wait)
+// ‡ - ‡ ‡ - ‡ ‡ - ‡ //
+
+// »« - »« »« - »« »« - »« //
+// X  = FUNCTION
+// »« - »« »« - »« »« - »« //
+
+// @ - @ @ - @ @ - @ //
+// X = airport stage (enter the aiport // // Passport check / // Luggage check //// Collect luggage and passport //// Get on the plane // )
+// @ - @ @ - @ @ - @ // 
+
+// ! - ! X ! - ! // = CLARIFICAITON TEXT
+
+// * * * X * * * // = If statments
+
+// < * * X * * > // = else statments
+
+// < < * X * > > // = else if statments
+

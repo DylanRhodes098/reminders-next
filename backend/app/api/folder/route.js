@@ -1,31 +1,63 @@
-// Import libraries //
+// - - - // - - - //
+// Imports 
+// - - - // - - - //
 
-
-// Import tools //
+// < - Library Imports - > //
 import { NextResponse } from "next/server";
-import { folderCreate, folderUpdate, folderDelete } from "../../../validation/folder";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../../../lib/db.js";
 
-
-// Import model files //
-
+// < - Model imports - > //
 import Folder from "../../../models/folder";
 import SubLists from "../../../models/subLists";
 
-// Define node runtime //
+// < - Function imports - > //
+import { folderCreate, folderUpdate, folderDelete } from "../../../validation/folder";
+import { JWT_SECRET } from "../../../lib/db.js";
+
+// - - - // - - - //
+// Node 
+// - - - // - - - //
+
+// < - guarantees this route runs in the Node.js runtime, giving access to Node-only tools and APIs - > //
 export const runtime = 'nodejs';
 
-// Create a get route to retrieve all profiles //
+// - - - // - - - //
+// Routes
+// - - - // - - - //
+
+  // »« - »« »« - »« »« - »« //
+  // Get route 
+  // »« - »« »« - »« »« - »« //
 export async function GET(req) {
+
+  // ‡ - ‡ ‡ - ‡ ‡ - ‡ //
+  // Walk 
+  // ‡ - ‡ ‡ - ‡ ‡ - ‡ //
     try {
+
+      // @ - @ @ - @ @ - @ //
+      // enter the aiport 
+      // @ - @ @ - @ @ - @ //
+
+      // < - Define the frontend url the user repsonded - > //
     const { searchParams } = new URL(req.url);
+
+    // < - Define include to navigate through the url and find the value for key "include" - > //
     const include = searchParams.get('include');
     
+    // < - Define an empty object - > //
     const queryOptions = {};
     
-    // Include sublists if requested
+    // * * * //
+    // if the value in the url is equaivelant to the subList asked by the uber 
+    // * * * //
     if (include === 'subLists') {
+
+      // @ - @ @ - @ @ - @ //
+      // Collect luggage and passport
+      // @ - @ @ - @ @ - @ //
+
+      // < - Give the object a specific request to send to the model file - > //
       queryOptions.include = [{
         model: SubLists,
         as: 'subLists',
@@ -33,10 +65,18 @@ export async function GET(req) {
       }];
     }
     
+    // < - Fetch all folders from the model file using the provided query options - > // 
     const folders = await Folder.findAll(queryOptions);
 
+    // < - Return a success message - > //
     return NextResponse.json(folders, {status:200});
+
+    // ‡ - ‡ ‡ - ‡ ‡ - ‡ //
+    // Wait 
+    // ‡ - ‡ ‡ - ‡ ‡ - ‡ //
     } catch (err) {
+
+      // < - Return error message if data failed security - > //
         console.error("GET failed:", err);
         const msg =
           process.env.NODE_ENV === "development"
@@ -47,46 +87,121 @@ export async function GET(req) {
 }
 
 
-// Create a post route to create a profile //
+ // »« - »« »« - »« »« - »« //
+  // Post Route 
+  // »« - »« »« - »« »« - »« //
 export async function POST(req) {
+
+  // ‡ - ‡ ‡ - ‡ ‡ - ‡ //
+  // Walk 
+  // ‡ - ‡ ‡ - ‡ ‡ - ‡ //
     try {
-    // Extract userId from JWT token
+
+// @ - @ @ - @ @ - @ //
+// enter the aiport 
+// @ - @ @ - @ @ - @ //
+
+    // < - Define the authroization value in the header of the JWT - > //
     const authHeader = req.headers.get("authorization");
+
+    // * * * //
+    // If there isn't an authroization value or the value doesn't start with Bearer 
+    // * * * //
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+
+      // < - Retur error message - > //
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const token = authHeader.substring(7); // Remove "Bearer " prefix
+    // < - Remove bearer from authroization value string - > //
+    const token = authHeader.substring(7); 
+
+    // < - define decoded - > //
     let decoded;
+
+    // < - Walk - > //
     try {
+
+      // @ - @ @ - @ @ - @ //
+      // Passport check (secuirty check the user) 
+      // @ - @ @ - @ @ - @ //
+
+      // < - define decoded to verify the new token - > //
+      // < - token = header.payload.signature - > //
+      // < - verify recomputes the token (signs it again) and checks they match - > //
+      // < - If they dont match then it had been tampered with along the way - > //
       decoded = jwt.verify(token, JWT_SECRET);
+
+      // < - Wait - > //
     } catch (jwtError) {
+
+      // < - if there is an error verifiying the token, return an error - > //
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
+    // < - retieve the id from the verified token - > //
     const userId = decoded.id;
+
+    // * * * //
+    // if there isnt an id 
+    // * * * //
     if (!userId) {
+
+      // < - return an error message - > //
       return NextResponse.json({ error: "User ID not found in token" }, { status: 401 });
     }
 
+    // @ - @ @ - @ @ - @ //
+    // Luggage check (secuirty check the data) 
+    // @ - @ @ - @ @ - @ //
+
+    // < - retrieve the json in the request - > //
+    // < - req.json reads and return the raw json (which is the data the user wants to edit, add or delete) - > //
     const body = await req.json();
+
+    // < - Use zod to security check the data - > //
+    // < - Zod returns an object that looks like this = {success: true, data: { X } - > //
     const parsed = folderCreate.safeParse(body);
 
+    // * * * //
+    // If security check was unsuccessful 
+    // * * * //
     if (!parsed.success) {
+
+        // < - Return an error resoponse - > //
         return NextResponse.json({ error: "Missing fields", message: parsed.error.format() }, { status: 400 });
       }
          
-      // Add userId to the folder data
+      // @ - @ @ - @ @ - @ //
+      // Collect luggage and passport (wrap the user and data into an object) 
+      // @ - @ @ - @ @ - @ //
+
+      // < - Create an object - > //
       const folderData = {
+
+        // < - extract the data from the zod object - > //
         ...parsed.data,
+
+        // < - Add the id - > //
         userId: userId
       };
+
+      // @ - @ @ - @ @ - @ //
+      // Get on the plane 
+      // @ - @ @ - @ @ - @ //
       
+      // < - Send the new folder object to the model file - > // 
       const createFolder = await Folder.create(folderData);
         
+      // < - Return success message - > // 
         return NextResponse.json(createFolder, { status: 200 });
 
+        // ‡ - ‡ ‡ - ‡ ‡ - ‡ //
+        // Wait 
+        // ‡ - ‡ ‡ - ‡ ‡ - ‡ //
     } catch (err) {
+
+      // < - Return error message - > //
         const msg =
         process.env.NODE_ENV === "development"
           ? err.parent?.sqlMessage || err.message

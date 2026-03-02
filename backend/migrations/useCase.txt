@@ -1,4 +1,20 @@
 MIGRATION FOLDER
 
-Migration Definition : The migration folder listens to your temrinal commands and creates DBs and tables accordingly. 
+Migration Definition : The migration folder listens to your terminal commands and creates DBs and tables accordingly.
 
+Functions : 
+    /folder.js : 
+    export async function up(queryInterface, Sequelize) = 
+
+
+Functions : 
+up = Function to create db
+down = Function to drop db
+
+Operators : 
+queryInterface = Gives package.json access to add, drop, create, update db
+Sequelize = Imports Sequelize library to use required tools. 
+
+Methods : 
+.createTable = Create table
+.dropTable = Delete table

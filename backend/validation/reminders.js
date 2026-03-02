@@ -1,5 +1,46 @@
 import { z } from "zod";
 
+// OTHER //
+
+// - - - The following object retrieves raw data to normalize - - - //
+const optionalDate = z.preprocess(
+
+  // - - - Map through each field - - - //
+  (v) => {
+
+    // - - - If field is null, undefined or an empty string, return null - - - //
+    if (v === null || v === undefined || v === "") return null;
+    
+    // - - - If value is a Date object but represents an invalid date, return null - - - //
+    if (v instanceof Date && isNaN(v.getTime())) return null;
+
+    // - - - If field is a string, translate it into a date - - - // 
+    if (typeof v === "string") {
+      const parsed = new Date(v);
+
+      // - - - If newly defined date is still not a valid date, return null - - - //
+      if (isNaN(parsed.getTime())) return null;
+
+        // - - - Else return newly defined date  - - - //
+      return parsed;
+    }
+    // - - - If data prases all rules, return original data - - - //
+    return v;
+
+  },
+  z.union([
+    z.null(),
+    z.coerce.date().refine(
+      (d) => {
+        // Check if date is valid
+        if (isNaN(d.getTime())) return false;
+        return d.getTime() > Date.now() + 30_000;
+      },
+      { message: "Date must be at least 30 seconds in the future" }
+    )
+  ]).transform((val) => val === null ? undefined : val)
+).optional();
+
 // POST Data //
 
 // - - - Only allow an object - - - //
@@ -60,46 +101,6 @@ export const remindersDelete = z.object({
 // - - - The following object is optional to delete - - - //
 export const optionalRemindersDelete = remindersDelete.partial();
 
-// OTHER //
-
-// - - - The following object retrieves raw data to normalize - - - //
-const optionalDate = z.preprocess(
-
-  // - - - Map through each field - - - //
-  (v) => {
-
-    // - - - If field is null, undefined or an empty string, return null - - - //
-    if (v === null || v === undefined || v === "") return null;
-    
-    // - - - If value is a Date object but represents an invalid date, return null - - - //
-    if (v instanceof Date && isNaN(v.getTime())) return null;
-
-    // - - - If field is a string, translate it into a date - - - // 
-    if (typeof v === "string") {
-      const parsed = new Date(v);
-
-      // - - - If newly defined date is still not a valid date, return null - - - //
-      if (isNaN(parsed.getTime())) return null;
-
-        // - - - Else return newly defined date  - - - //
-      return parsed;
-    }
-    // - - - If data prases all rules, return original data - - - //
-    return v;
-
-  },
-  z.union([
-    z.null(),
-    z.coerce.date().refine(
-      (d) => {
-        // Check if date is valid
-        if (isNaN(d.getTime())) return false;
-        return d.getTime() > Date.now() + 30_000;
-      },
-      { message: "Date must be at least 30 seconds in the future" }
-    )
-  ]).transform((val) => val === null ? undefined : val)
-).optional();
 
 export default {
   remindersCreate,

@@ -10,7 +10,9 @@ import { listCreate } from "../../../validation/list";
 
 import List from "../../../models/list";
 
-// Define node runtime //
+
+
+// guarantees this route runs in the Node.js runtime, giving access to Node-only tools and APIs. //
 export const runtime = 'nodejs';
 
 // Create a get route to retrieve all profiles //

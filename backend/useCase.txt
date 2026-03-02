@@ -9,9 +9,11 @@ DEPLOY SEQUENCE
 /db/schema.sql = Confirms DB creation
 
 
-RUNTIME SEQUENCE 
+COMMUNICATION SEQUENCE 
 
-/app/api/route.js = The terminal where the data is shipped
+/services = The uber picking-up/dropping-off the data to the terminal
+↓
+/app/api/route.js = The terminal where the data is processed
 ↓
 /validation = The termianl secuirty, confriming the data is valid
 ↓

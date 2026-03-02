@@ -44,7 +44,7 @@ await queryInterface.createTable('reminders', {
 })
 }
 
-// Initiate async up function //
+// Initiate async down function //
 export async function down(queryInterface, Sequelize) {
 
     // Define queryinterface method //

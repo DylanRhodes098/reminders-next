@@ -103,17 +103,34 @@ export async function POST(req) {
 }
 
 export async function PUT(req) {
+
+  // walk //
+
     try {
+
+// enter the aiport //
+
+// read the json the user requested to update //
       const body = await req.json();
+
+      // Luggage check //
+
+      // Security check the data is valid //
       const parsed = remindersUpdate.safeParse(body);
   
+      // if secuirty check failed //
       if (!parsed.success) {
+
+        // respond with an error message //
         return NextResponse.json(
           { error: "Missing/invalid fields", details: parsed.error.format() },
           { status: 400 }
         );
       }
   
+      // Passport check //
+
+      // Wrap the requested data into an object //
       const { id, note, date_of_reminder } = parsed.data;
   
       if (!id) {
