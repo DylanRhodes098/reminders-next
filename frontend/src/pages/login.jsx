@@ -9,7 +9,7 @@ import { login as loginUser} from "../services/auth";
 
 // - - -  UI Components - - - //
 import { Button, Checkbox, Form, Input, Card, Space } from 'antd';
-import { BackgroundGradientAnimation } from "../components/ui/background-gradient-animation";
+
 import { Label } from "../components/ui/label";
 
 import { cn } from "../components/libs/utilsLogin";
@@ -68,7 +68,7 @@ export default function Login() {
       
     return (
         <> 
- <BackgroundGradientAnimation>
+
       <motion.div
         initial={{ opacity: 0.0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -81,7 +81,7 @@ export default function Login() {
       >
         
    
-        <div className="backGround h-screen w-screen flex flex-col items-center text-center relative z-10">
+        <div className="backGround h-screen w-screen flex flex-col items-center text-left relative z-10">
         <Space className="m-12" direction="vertical" size={20}>
         <Card title="Login" style={{ width: 500 }}>
         <Form
@@ -93,7 +93,7 @@ export default function Login() {
   autoComplete="off"
   className="m-4 flex flex-col items-center"
 >
-  <div className="p-4 flex flex-col items-center">
+  <div className="p-4 flex flex-col items-left">
     <Form.Item
       label="Email"
       name="email"
@@ -103,7 +103,7 @@ export default function Login() {
     </Form.Item>
   </div>
 
-  <div className="p-4 flex flex-col items-center">
+  <div className="p-4 flex flex-col items-left">
     <Form.Item
       label="Password"
       name="password"
@@ -128,7 +128,7 @@ export default function Login() {
         </Space>
         </div>
         </motion.div>
-        </BackgroundGradientAnimation>
+      
         
 
      

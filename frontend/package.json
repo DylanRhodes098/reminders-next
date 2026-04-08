@@ -19,7 +19,7 @@
     "@radix-ui/react-label": "^2.1.8",
     "@tabler/icons-react": "^3.36.1",
     "@tailwindcss/cli": "^4.1.18",
-    "@toolpad/core": "^0.16.0",
+    "@toolpad/core": "^0.1.55",
     "@tsparticles/engine": "^3.9.1",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.9.1",
@@ -38,6 +38,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "^25.5.2",
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
@@ -49,6 +50,7 @@
     "globals": "^16.5.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
+    "typescript": "^6.0.2",
     "vite": "^7.3.1"
   }
 }

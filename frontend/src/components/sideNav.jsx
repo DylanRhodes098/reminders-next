@@ -10,12 +10,13 @@ export default function SideNav() {
   const navigate = useNavigate();
 
   return (
-    <div className="sideNavWrapper" style={{ backgroundColor: "#f3f4f6", paddingTop: 12 }}>
+    
+    <div className="sideNavWrapper sideNavTopPanel" style={{ paddingTop: 12 }}>
+      <p className="pl-4" style={{ fontStyle: "italic" }}>Dashboard</p>
 
       <Menu
         mode="inline"
         selectable={false}
-        style={{backgroundColor: "#f3f4f6"}}
         items={[
           {
             key: "home",
@@ -28,7 +29,8 @@ export default function SideNav() {
             icon: <SettingOutlined />,
             label: "Settings",
             onClick: () => navigate("/settings", { replace: true }),
-          }
+          },
+    
         ]}
       />
     </div>

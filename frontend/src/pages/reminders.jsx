@@ -992,10 +992,10 @@ const [editTimeOpen, setEditTimeOpen] = useState(false);
      return (
         <>
         <div className="Global"> 
-        <h1 className="mb-4 font-bold text-xl">
+        <h1 className="pt-4 mb-4 text-2xl font-bold">
         {subList ? subList.name : "Loading..."}
         </h1>
-        <Divider />
+       
         <Menu
   mode="inline"
   openKeys={openKeys}

@@ -211,7 +211,9 @@ export default function List () {
                 alignItems: "center",
               }}
             >
-              <span>{sub.name}</span>
+              <span className="text-[rgba(0,0,0,0.88)] dark:text-[rgba(255,255,255,0.85)]">
+                {sub.name}
+              </span>
         
               <DeleteOutlined
                 onClick={(e) => {
@@ -316,7 +318,9 @@ export default function List () {
 
           // * * * Display folder name * * * // 
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>{folder.name}</span>
+            <span className="text-[rgba(0,0,0,0.88)] dark:text-[rgba(255,255,255,0.85)]">
+              {folder.name}
+            </span>
       
             
             <DeleteOutlined
@@ -528,16 +532,16 @@ setSubList(current =>
      return (
         <>
         <div
-          className="pt-1 sideNav2Wrapper"
-          style={{ backgroundColor: "#f3f4f6", minHeight: "100vh", width: "100%" }}
+          className="sideNav2Surface h-full"
         >
           
         <Divider />
+        <p className="pl-4" style={{ fontStyle: "italic" }}>Agent</p>
         <Menu
     className=""
       key={`menu-${creatingSubListForFolder || 'none'}`}
       onClick={onClickHome}
-      style={{ width: '100%', backgroundColor: "#f3f4f6" }}
+      style={{ width: "100%" }}
       defaultSelectedKeys={['1']}
       openKeys={openKeys}
       onOpenChange={setOpenKeys}
@@ -583,7 +587,7 @@ setSubList(current =>
 <PlusCircleOutlined
   style={{ marginTop: 24 }}
   onClick={handleCreateFolderClick}
-  className="plus-icon hover:bg-gray-100 rounded-md p-2"
+  className="plus-icon hover:bg-gray-100 dark:hover:bg-white/10 rounded-md p-2"
 />
    
                 </div>
