@@ -310,6 +310,7 @@ export default function List () {
 
       // * Display folder menu using Ants Menu Component * // 
       return {
+
         key: String(folder.id),
         label: (
 
@@ -526,14 +527,17 @@ setSubList(current =>
 
      return (
         <>
-        <div className=""> 
-        <h1 className="mb-4 font-bold text-xl">List</h1>
+        <div
+          className="pt-1 sideNav2Wrapper"
+          style={{ backgroundColor: "#f3f4f6", minHeight: "100vh", width: "100%" }}
+        >
+          
         <Divider />
         <Menu
     className=""
       key={`menu-${creatingSubListForFolder || 'none'}`}
       onClick={onClickHome}
-      style={{ width: '100%' }}
+      style={{ width: '100%', backgroundColor: "#f3f4f6" }}
       defaultSelectedKeys={['1']}
       openKeys={openKeys}
       onOpenChange={setOpenKeys}

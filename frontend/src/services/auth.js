@@ -19,13 +19,18 @@ export async function login({ email, password }) {
   // @ - @ @ - @ @ - @ //
   const { data } = await api.post("/user/login", { email, password });
 
+  const token =
+    typeof data === "string"
+      ? data
+      : (data?.token || data?.authToken || data?.accessToken || "");
+
   // * * * //
   // if data has been added //
   // * * * //
-  if (data) {
+  if (token) {
 
     // < - add a key value pair to the browser database - > //
-    sessionStorage.setItem("authToken", data);
+    sessionStorage.setItem("authToken", token);
 
     // ‡ - ‡ ‡ - ‡ ‡ - ‡ //
     // Hub //
@@ -33,7 +38,7 @@ export async function login({ email, password }) {
     try {
 
       // < - Define payload by retreiving the payload from the token, converting base64 language into a javascript object - > //
-      const payload = JSON.parse(atob(data.split('.')[1]));
+      const payload = JSON.parse(atob(token.split('.')[1]));
 
       // * * * //
       // If the payload id exists //
@@ -57,7 +62,7 @@ export async function login({ email, password }) {
   }
 
   // < - return data allows the developer to use the backend response however they like on the frontend, and shows the user the login was successful - > //
-  return data;
+  return token || data;
 }
 
 

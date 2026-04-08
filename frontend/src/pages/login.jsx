@@ -38,12 +38,16 @@ export default function Login() {
       const onFinish = async (values) => {
         setErr("");
         try {
-          await loginUser({
+          console.log("Login submit values:", values);
+          const token = await loginUser({
             email: values.email,
             password: values.password
           });
+          console.log("loginUser returned:", token);
           navigate("/", { replace: true });
+          console.log("Navigated to /");
         } catch (error) {
+          console.warn("Login request failed:", error);
           const errorMessage =
             error?.response?.data?.error ||
             error?.response?.data?.msg ||
@@ -90,6 +94,10 @@ export default function Login() {
   wrapperCol={{ span: 16 }}
   style={{ maxWidth: 600 }}
   onFinish={onFinish}
+  onFinishFailed={(info) => {
+    // Make validation failures obvious during dev
+    console.warn("Login validation failed:", info);
+  }}
   autoComplete="off"
   className="m-4 flex flex-col items-center"
 >

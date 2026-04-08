@@ -84,7 +84,8 @@ export const BackgroundGradientAnimation = ({
       <div className={cn("", className)}>{children}</div>
       <div
         className={cn(
-          "gradients-container h-full w-full blur-lg",
+          // Visual-only layer; don't block clicks on children content.
+          "gradients-container h-full w-full blur-lg pointer-events-none",
           isSafari ? "blur-2xl" : "[filter:url(#blurMe)_blur(40px)]"
         )}>
         <div
