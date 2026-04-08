@@ -1,3 +1,8 @@
 .sideNavWrapper {
+  /* Intentionally NOT full-height; used by small nav sections like `Sidnav` */
+}
+
+/* Full-height sidebar section (used by `SideNav2`) */
+.sideNav2Wrapper {
   height: 100vh;
 }
