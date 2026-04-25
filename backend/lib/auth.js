@@ -3,7 +3,7 @@
 // - - - // - - - //
 
 // < - File imports - > //
-import { User } from "../models/user.js";
+import { User } from "../models/SaaS/ui/user.js";
 import { JWT_SECRET } from "./db.js";
 
 // < - Libaray Imports - > //

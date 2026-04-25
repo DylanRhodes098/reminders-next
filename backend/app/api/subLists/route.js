@@ -8,7 +8,7 @@ import { subListsCreate, subListsDelete } from "../../../validation/subList";
 
 // Import model files //
 
-import SubLists from "../../../models/subLists";
+import SubLists from "../../../models/SaaS/ui/subLists";
 
 // Define node runtime //
 export const runtime = 'nodejs';

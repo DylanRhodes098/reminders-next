@@ -7,7 +7,7 @@ import { signToken } from "../../../../lib/auth";
 
 // Import model files //
 
-import User from "../../../../models/user.js";
+import User from "../../../../models/SaaS/ui/user.js";
 
 export const runtime = 'nodejs';
 

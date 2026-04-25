@@ -8,7 +8,7 @@ import { listCreate } from "../../../validation/list";
 
 // Import model files //
 
-import List from "../../../models/list";
+import List from "../../../models/SaaS/ui/list";
 
 
 

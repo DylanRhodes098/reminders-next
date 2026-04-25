@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --animate-first: moveVertical 30s ease infinite;
   --animate-second: moveInCircle 20s reverse infinite;
@@ -52,5 +54,34 @@
 }
 
 .Global {
-  background-color: #d8f9ff;
+  background-color: #ffffff;
+  color: rgba(0, 0, 0, 0.88);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dark .Global {
+  background-color: #141414;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Ensure icons follow dark-mode foreground color by default */
+.dark .anticon {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Reminders menu: borderless inputs inherit row surface (light/dark via Ant menu tokens) */
+.Global .ant-menu .ant-input,
+.Global .ant-menu .ant-input-affix-wrapper {
+  background: transparent;
+  color: inherit;
+}
+
+.Global .ant-menu .ant-input::placeholder,
+.Global .ant-menu .ant-input-affix-wrapper input::placeholder {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.dark .Global .ant-menu .ant-input::placeholder,
+.dark .Global .ant-menu .ant-input-affix-wrapper input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
 }

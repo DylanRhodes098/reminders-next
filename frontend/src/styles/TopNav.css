@@ -1,7 +1,23 @@
 .topNavWrapper {
-  background-color: #d8f9ff;
-  border-color: black;
-  border-width: 0.5px;
+  background-color: #f3f4f6;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  color: rgba(0, 0, 0, 0.88);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.dark .topNavWrapper {
+  background-color: #1f1f1f;
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.topNavTitle {
+  color: rgba(0, 0, 0, 0.88);
+  font-weight: 600;
+}
+
+.dark .topNavTitle {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .searchBar {

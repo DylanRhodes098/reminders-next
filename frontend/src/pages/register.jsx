@@ -52,7 +52,7 @@ export default function Register() {
   return (
     <div className="backGround h-screen w-screen flex flex-col items-center text-center">
            <Space className="m-12" direction="vertical" size={20}>
-           <Card title="Login" style={{ width: 500 }}>
+           <Card title="Register" style={{ width: 500 }}>
 
       {/* Error message */}
       {err ? (

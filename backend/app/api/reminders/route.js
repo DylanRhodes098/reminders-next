@@ -8,7 +8,7 @@ import { remindersCreate, remindersDelete, remindersUpdate, remindersUpdateWithI
 
 // Import model files //
 
-import Reminders from "../../../models/reminders";
+import Reminders from "../../../models/SaaS/ui/reminders";
 
 // Define node runtime //
 export const runtime = 'nodejs';

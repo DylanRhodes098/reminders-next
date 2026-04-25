@@ -1,10 +1,10 @@
 // Import tools //
 import { NextResponse } from "next/server";
 import { userCreate } from "../../../../validation/user";
-import User from "../../../../models/user.js";
-import Folder from "../../../../models/folder.js";
-import SubLists from "../../../../models/subLists.js";
-import List from "../../../../models/list.js";
+import User from "../../../../models/SaaS/ui/user.js";
+import Folder from "../../../../models/SaaS/ui/folder.js";
+import SubLists from "../../../../models/SaaS/ui/subLists.js";
+import List from "../../../../models/SaaS/ui/list.js";
 
 export const runtime = 'nodejs';
 

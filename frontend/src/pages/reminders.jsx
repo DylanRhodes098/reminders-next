@@ -24,7 +24,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import "../styles/SideNav.css";
 import "../styles/listStyle.css";
 import "../styles/global.css"
-import { RemindersDropDown } from "../data/remindersDropDown";
+
 
  // »« - »« »« - »« »« - »« //
 // Primary Function 
@@ -992,15 +992,14 @@ const [editTimeOpen, setEditTimeOpen] = useState(false);
      return (
         <>
         <div className="Global"> 
-        <h1 className="mb-4 font-bold text-xl">
+        <h1 className="pt-4 mb-4 text-2xl font-bold">
         {subList ? subList.name : "Loading..."}
         </h1>
-        <Divider />
+       
         <Menu
   mode="inline"
   openKeys={openKeys}
   onOpenChange={setOpenKeys}
-  style={{backgroundColor:"#d8f9ff" }}
   items={[
     ...buildMenuItems(reminderFolders, reminders),
     ...(creatingFolder ? [{
