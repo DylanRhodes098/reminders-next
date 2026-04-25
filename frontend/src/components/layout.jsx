@@ -5,6 +5,7 @@ import Footer from "./footer";
 import { Divider } from "antd";
 import SideNav2 from "./sideNav2";
 import SideNav from "./sideNav";
+import SideNav3 from "./sideNav3";
 import "../styles/global.css";
 
 export default function Layout() {
@@ -17,11 +18,15 @@ export default function Layout() {
         <div className="flex flex-1 w-full gap-6 min-h-0 items-stretch">
           {/* Left: SideNav (natural height, top) + SideNav2 (fills rest) */}
           <aside className="w-[10%] min-w-[220px] shrink-0 flex flex-col min-h-0 self-stretch">
+            
             <div className="shrink-0">
-             
               <SideNav />
             </div>
-            <Divider style={{ margin: 0 }} />
+            <Divider style={{ margin: 0, padding: 1, borderColor: 'lightgray' }} />
+            <div className="shrink-0">
+              <SideNav3 />
+            </div>
+            <Divider style={{ margin: 0, padding: 1, borderColor: 'lightgray' }} />
             <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
               <SideNav2 />
             </div>

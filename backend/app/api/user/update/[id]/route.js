@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import {userUpdate, userUpdateWithId} from "../../../../../validation/user";
 
 // Import files //
-import User from "../../../../../models/user";
+import User from "../../../../../models/SaaS/ui/user";
 
 // Initiate PUT function to edit user //
 export async function PUT(req, {params}) {

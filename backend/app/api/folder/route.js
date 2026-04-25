@@ -7,8 +7,8 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
 // < - Model imports - > //
-import Folder from "../../../models/folder";
-import SubLists from "../../../models/subLists";
+import Folder from "../../../models/SaaS/ui/folder";
+import SubLists from "../../../models/SaaS/ui/subLists";
 
 // < - Function imports - > //
 import { folderCreate, folderUpdate, folderDelete } from "../../../validation/folder";

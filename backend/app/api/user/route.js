@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import User from "../../../models/user.js";
+import User from "../../../models/SaaS/ui/user.js";
 import sequelize from "../../../lib/db.js";
 
 export const runtime = 'nodejs';

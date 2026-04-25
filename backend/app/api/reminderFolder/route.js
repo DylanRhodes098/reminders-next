@@ -9,7 +9,7 @@ import { JWT_SECRET } from "../../../lib/db.js";
 
 
 // Import model files //
-import ReminderFolder from "../../../models/reminderFolder";
+import ReminderFolder from "../../../models/SaaS/ui/reminderFolder";
 
 // Define node runtime //
 export const runtime = 'nodejs';

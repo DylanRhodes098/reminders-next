@@ -1,0 +1,78 @@
+// Import libararies //
+import sequelize from "../../../lib/db.js";
+
+import {Model, DataTypes} from "sequelize";
+import { randomUUID } from "crypto";
+
+export class Reminders extends Model {}
+
+export const hotReloads = () => {
+if (sequelize.models.Reminders) {
+    return sequelize.models.Reminders;
+}
+}
+
+Reminders.init ({
+  id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    primaryKey: true,
+    defaultValue: DataTypes.UUIDV4,
+  },
+
+  note: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
+
+  date_of_reminder: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    validate: {
+      isDate: true,
+      isAfter: new Date().toISOString(), // must be in the past
+    },
+  },
+
+  // foreign key
+  subListId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+      isUUID: 4,
+    },
+  },
+
+  // foreign key
+  reminderFolderId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    validate: {
+      isUUID: 4,
+    },
+  },
+  // createdAt and updatedAt are handled automatically by timestamps: true
+},
+          {
+            sequelize,
+            modelName: "Reminders",
+            tableName: "reminders",
+            freezeTableName: true,
+            timestamps: true,
+            underscored: false,
+            hooks: {
+              beforeCreate: async (reminder) => {
+                // Generate UUID if not provided (for MySQL compatibility)
+                if (!reminder.id) {
+                  reminder.id = randomUUID();
+                }
+              }
+            }
+          }
+        );
+    
+export default Reminders;

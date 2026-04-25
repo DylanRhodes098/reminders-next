@@ -535,8 +535,8 @@ setSubList(current =>
           className="sideNav2Surface h-full"
         >
           
-        <Divider />
-        <p className="pl-4" style={{ fontStyle: "italic" }}>Agent</p>
+       
+        <p className="pl-4" style={{ fontStyle: "italic", paddingTop: 12 }}>Lists</p>
         <Menu
     className=""
       key={`menu-${creatingSubListForFolder || 'none'}`}

@@ -17,8 +17,17 @@ export async function userData(userId) {
     // @ - @ @ - @ @ - @ //
     // Uber find user via GET / user id //
     // @ - @ @ - @ @ - @ //
-    const {data} = await api.get(`/user${userId}` );
+    // Backend currently exposes GET /api/user (all users).
+    // If a userId is provided, find that user in the returned list.
+    const { data } = await api.get(`/user`);
 
-    // < - return fetched data to the frontend - > //
+    if (!userId) return data;
+    if (!Array.isArray(data)) return null;
+
+    return data.find((u) => String(u?.id) === String(userId)) || null;
+}
+
+export async function updateUser(userId, body) {
+    const { data } = await api.put(`/user/update/${userId}`, body);
     return data;
 }

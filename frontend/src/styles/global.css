@@ -63,3 +63,25 @@
   background-color: #141414;
   color: rgba(255, 255, 255, 0.85);
 }
+
+/* Ensure icons follow dark-mode foreground color by default */
+.dark .anticon {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Reminders menu: borderless inputs inherit row surface (light/dark via Ant menu tokens) */
+.Global .ant-menu .ant-input,
+.Global .ant-menu .ant-input-affix-wrapper {
+  background: transparent;
+  color: inherit;
+}
+
+.Global .ant-menu .ant-input::placeholder,
+.Global .ant-menu .ant-input-affix-wrapper input::placeholder {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.dark .Global .ant-menu .ant-input::placeholder,
+.dark .Global .ant-menu .ant-input-affix-wrapper input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}

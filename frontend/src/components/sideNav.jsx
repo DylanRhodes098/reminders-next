@@ -24,12 +24,7 @@ export default function SideNav() {
             label: "Home",
             onClick: () => navigate("/", { replace: true }),
           },
-          {
-            key: "Settings",
-            icon: <SettingOutlined />,
-            label: "Settings",
-            onClick: () => navigate("/settings", { replace: true }),
-          },
+         
     
         ]}
       />

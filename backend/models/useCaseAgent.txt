@@ -1,0 +1,36 @@
+INTERFACE / LOOP : 
+
+AgentRun (Output) = The Agent response 
+
+Message (Content) "User" = The User Request 
+
+AGENT / LOOP : 
+
+Prompt (messages) = User request Paylod to send to LLM 
+
+Prompt ( Tools ) = Tool payload to send to the LLM 
+
+Memory ( Full payload ) = Stores the agent memeory 
+
+AGENT / LOGGING :
+
+ToolResult ( Full Payload ) = Tracks a tool completion
+
+runStep ( Full Payload ) = Tracks one full run of the loop 
+
+Goal ( Full Payload ) = Stores the goal information for the agent
+
+LLM / LOOP : 
+
+Message (Content) "assistant" = The LLMs message response 
+
+ToolCall (ToolName, Arguments) = The LLMs Tool response 
+
+LLM / LOGGING :
+
+usageMetrics (Full payload) = Tracks how many times the agent used the LLM
+
+
+
+
+

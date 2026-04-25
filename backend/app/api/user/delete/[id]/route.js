@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { userDelete } from "../../../../../validation/user";
-import { User } from "../../../../../models/user";
+import { User } from "../../../../../models/SaaS/ui/user";
 
 export async function DELETE(req, {params} ) {
   try {

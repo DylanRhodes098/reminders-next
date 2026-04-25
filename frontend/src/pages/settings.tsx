@@ -1,11 +1,16 @@
 // - - -  React imports - - - //
 import React from 'react';
 import {useState} from "react";
-import { Card, Select, Input } from "antd";
+import { Card, Select, Input, Switch } from "antd";
+import { useTheme } from "../styles/ThemeContext.jsx";
+import { MoonOutlined, SunOutlined   } from "@ant-design/icons";
 
 const { TextArea } = Input;
 
-export default function Home() {
+export default function Settings() {
+
+  const { isDark, setIsDark } = useTheme();
+
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
   };
@@ -15,9 +20,15 @@ export default function Home() {
       <h1 className="text-2xl font-bold">Settings</h1>
 
       <div>
-      <p className="font-bold">Prospect Description</p>
-      <TextArea rows={4} placeholder="Description" className="w-full" />
-      </div>
+        <h2>Theme</h2>
+      <Switch
+          checked={isDark}
+          onChange={setIsDark}
+          checkedChildren={<MoonOutlined />}
+          unCheckedChildren={<SunOutlined />}
+          aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+        /> 
+        </div>
 
       <div>
       <Card size="small" title="Difficulty" className="w-1/2">

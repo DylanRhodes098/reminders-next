@@ -24,7 +24,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import "../styles/SideNav.css";
 import "../styles/listStyle.css";
 import "../styles/global.css"
-import { RemindersDropDown } from "../data/remindersDropDown";
+
 
  // »« - »« »« - »« »« - »« //
 // Primary Function 
@@ -1000,7 +1000,6 @@ const [editTimeOpen, setEditTimeOpen] = useState(false);
   mode="inline"
   openKeys={openKeys}
   onOpenChange={setOpenKeys}
-  style={{backgroundColor:"#d8f9ff" }}
   items={[
     ...buildMenuItems(reminderFolders, reminders),
     ...(creatingFolder ? [{
