@@ -1,4 +1,4 @@
-ID {} 
+id {} 
 
 HAS MANY
 messages {
@@ -9,6 +9,6 @@ messages {
 HAS MANY 
 actions {
 toolName: string,
-args: ToolArgs = {}
+args: toolArgs = {}
 } 
 

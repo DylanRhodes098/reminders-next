@@ -14,6 +14,10 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+communicationId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 name: {
 type: DataTypes.STRING,
 allowNull: false,
@@ -21,26 +25,23 @@ validate: {
 notEmpty: true,
 },
 },
-
 description: {
 type: DataTypes.TEXT,
 allowNull: true,
 },
-
 priority: {
 type: DataTypes.INTEGER,
 allowNull: true,
 },
-
+agentConfigId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 buildPromptToLlmId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
 inputId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-agentConfigId: {
 type: DataTypes.UUID,
 allowNull: true,
 },

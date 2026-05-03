@@ -1,6 +1,6 @@
 id {}
 
-Role {
+role {
     ENUM ('system' | 'user' | 'assistant')
 }
 

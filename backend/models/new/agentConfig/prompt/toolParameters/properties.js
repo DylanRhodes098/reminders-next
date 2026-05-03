@@ -14,13 +14,12 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
-schema: {
-type: DataTypes.JSONB,
+toolParametersId: {
+type: DataTypes.UUID,
 allowNull: true,
 },
-
-agentConfigId: {
-type: DataTypes.UUID,
+schema: {
+type: DataTypes.JSONB,
 allowNull: true,
 },
 createdAt: {

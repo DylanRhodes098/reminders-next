@@ -13,7 +13,7 @@ HAS MANY
 tools {
    name: string,
     description: string,
- parameters: ToolParameters {} 
+ parameters: toolParameters {} 
 terminal: boolean 
 tags: string[] = []
 }

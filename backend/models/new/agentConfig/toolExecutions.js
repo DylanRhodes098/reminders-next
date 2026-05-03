@@ -18,6 +18,14 @@ agentConfigId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
+success: {
+type: DataTypes.BOOLEAN,
+allowNull: true,
+},
+error: {
+type: DataTypes.TEXT,
+allowNull: true,
+},
 createdAt: {
 type: DataTypes.DATE,
 allowNull: false,

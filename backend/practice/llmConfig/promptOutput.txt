@@ -1,12 +1,12 @@
 id {}
 
-message {
+messages {
     role: ENUM ('system' | 'user' | 'assistant')
     content : string 
 }
 
 HAS MANY
-toolcallrequest {
+toolCallRequests {
   tool: string;
   args: JSONB;
 }

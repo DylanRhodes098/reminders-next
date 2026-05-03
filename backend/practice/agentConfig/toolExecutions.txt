@@ -3,13 +3,13 @@
   }
 
 HASMANY
-  toolCallRequest { 
+  toolCallRequests { 
 tool : string 
 args: key : value
   }
 
 HASMANY
-    toolResult { 
+    toolResults { 
 success : boolean
-erorr : boolean 
+error : boolean 
     }

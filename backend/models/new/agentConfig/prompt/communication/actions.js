@@ -14,34 +14,30 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+communicationId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 type: {
 type: DataTypes.STRING,
 allowNull: true,
 },
-
 name: {
 type: DataTypes.STRING,
-allowNull: true,
+allowNull: false,
+validate: {
+notEmpty: true,
 },
-
+},
 data: {
 type: DataTypes.JSONB,
 allowNull: true,
 },
-
 buildPromptToLlmId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
 receivePromptFromLlmId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-stateUpdateId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-agentConfigId: {
 type: DataTypes.UUID,
 allowNull: true,
 },

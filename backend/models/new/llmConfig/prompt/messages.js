@@ -2,8 +2,8 @@ import sequelize from "../../../../lib/db.js";
 import { Model, DataTypes } from "sequelize";
 export class Messages extends Model {}
 export const hotReloads = () => {
-if (sequelize.models.LlmConfigPromptMessages) {
-return sequelize.models.LlmConfigPromptMessages;
+if (sequelize.models.LlmConfigMessages) {
+return sequelize.models.LlmConfigMessages;
 }
 };
 Messages.init(
@@ -14,16 +14,18 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+promptId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 role: {
 type: DataTypes.STRING,
 allowNull: true,
 },
-
 content: {
 type: DataTypes.TEXT,
 allowNull: true,
 },
-
 promptInputId: {
 type: DataTypes.UUID,
 allowNull: true,
@@ -32,7 +34,11 @@ promptOutputId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
-llmConfigId: {
+builtPromptToLlmId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
+llmResponseId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
@@ -49,8 +55,8 @@ defaultValue: DataTypes.NOW,
 },
 {
 sequelize,
-modelName: "LlmConfigPromptMessages",
-tableName: "llm_config_prompt_messages",
+modelName: "LlmConfigMessages",
+tableName: "llm_config_messages",
 freezeTableName: true,
 timestamps: true,
 underscored: false,

@@ -2,8 +2,8 @@ import sequelize from "../../../../lib/db.js";
 import { Model, DataTypes } from "sequelize";
 export class BuildResponseToUser extends Model {}
 export const hotReloads = () => {
-if (sequelize.models.AgentConfigPromptBuildResponseToUser) {
-return sequelize.models.AgentConfigPromptBuildResponseToUser;
+if (sequelize.models.AgentConfigBuildResponseToUser) {
+return sequelize.models.AgentConfigBuildResponseToUser;
 }
 };
 BuildResponseToUser.init(
@@ -14,11 +14,11 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
-languageId: {
+promptId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
-agentConfigId: {
+languageId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
@@ -35,8 +35,8 @@ defaultValue: DataTypes.NOW,
 },
 {
 sequelize,
-modelName: "AgentConfigPromptBuildResponseToUser",
-tableName: "agent_config_prompt_build_response_to_user",
+modelName: "AgentConfigBuildResponseToUser",
+tableName: "agent_config_build_response_to_user",
 freezeTableName: true,
 timestamps: true,
 underscored: false,

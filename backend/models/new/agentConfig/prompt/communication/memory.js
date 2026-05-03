@@ -14,25 +14,23 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+communicationId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 key: {
 type: DataTypes.STRING,
 allowNull: true,
 },
-
 value: {
 type: DataTypes.JSONB,
 allowNull: true,
 },
-
 buildPromptToLlmId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
 inputId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-agentConfigId: {
 type: DataTypes.UUID,
 allowNull: true,
 },

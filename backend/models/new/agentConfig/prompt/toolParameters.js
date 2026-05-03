@@ -14,16 +14,15 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+promptId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 schema: {
 type: DataTypes.JSONB,
 allowNull: true,
 },
-
 toolsId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-agentConfigId: {
 type: DataTypes.UUID,
 allowNull: true,
 },

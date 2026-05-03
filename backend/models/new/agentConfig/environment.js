@@ -14,6 +14,10 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+agentConfigId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 name: {
 type: DataTypes.STRING,
 allowNull: false,
@@ -21,19 +25,12 @@ validate: {
 notEmpty: true,
 },
 },
-
 workingDirectory: {
 type: DataTypes.STRING,
 allowNull: true,
 },
-
 context: {
 type: DataTypes.JSONB,
-allowNull: true,
-},
-
-agentConfigId: {
-type: DataTypes.UUID,
 allowNull: true,
 },
 createdAt: {

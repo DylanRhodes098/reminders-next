@@ -2,8 +2,8 @@ import sequelize from "../../../lib/db.js";
 import { Model, DataTypes } from "sequelize";
 export class BuildResponseToUser extends Model {}
 export const hotReloads = () => {
-if (sequelize.models.AgentStepBuildResponseToUser) {
-return sequelize.models.AgentStepBuildResponseToUser;
+if (sequelize.models.AgentStepConfigBuildResponseToUser) {
+return sequelize.models.AgentStepConfigBuildResponseToUser;
 }
 };
 BuildResponseToUser.init(
@@ -31,8 +31,8 @@ defaultValue: DataTypes.NOW,
 },
 {
 sequelize,
-modelName: "AgentStepBuildResponseToUser",
-tableName: "agent_step_build_response_to_user",
+modelName: "AgentStepConfigBuildResponseToUser",
+tableName: "agent_step_config_build_response_to_user",
 freezeTableName: true,
 timestamps: true,
 underscored: false,

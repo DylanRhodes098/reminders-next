@@ -14,10 +14,6 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
-promptOutputId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
 llmConfigId: {
 type: DataTypes.UUID,
 allowNull: true,

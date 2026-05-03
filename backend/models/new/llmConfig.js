@@ -21,7 +21,6 @@ validate: {
 notEmpty: true,
 },
 },
-
 createdAt: {
 type: DataTypes.DATE,
 allowNull: false,

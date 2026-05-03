@@ -2,5 +2,5 @@ id { }
 
 messages { 
     role: ENUM ('system' | 'user' | 'assistant')
-    context : string 
+    content : string 
 }

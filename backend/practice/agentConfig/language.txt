@@ -2,7 +2,7 @@
   id {}
   
   HAS MANY
-buildPromptToLlm {goals, actions, memory}
+buildPromptToLlm {goals, actions, memories}
 
 HAS MANY
 receivePromptFromLlm {messages, actions} 

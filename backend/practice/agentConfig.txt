@@ -2,7 +2,7 @@
 id {}
 
 HAS MANY
-goal {
+goals {
    name: string,
     description: string,
     priority: number 
@@ -10,9 +10,9 @@ goal {
 
 HAS MANY
   language {
-buildPromptToLlm(builtByAgent) : goals, actions, memory, userRequest
+buildPromptToLlm(builtByAgent) : goals, actions, memories, userRequest
 receivePromptFromLlm(sentFromLlm) : messages, actions
-  buildResponseToUser(builtByAgent, sentToUser): message
+  buildResponseToUser(builtByAgent, sentToUser): messages
   }
 
 HAS MANY
@@ -36,8 +36,8 @@ context: JSONB;
 
 HAS MANY 
 toolExecutions {
-    toolCallRequest
-    toolResult
+    toolCallRequests
+    toolResults
 }
 
   maxIterations { 

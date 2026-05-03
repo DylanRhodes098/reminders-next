@@ -14,26 +14,23 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+promptId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 data: {
 type: DataTypes.JSONB,
 allowNull: true,
 },
-
 success: {
 type: DataTypes.BOOLEAN,
 allowNull: true,
 },
-
 error: {
 type: DataTypes.TEXT,
 allowNull: true,
 },
-
-toolExecutionsId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-agentConfigId: {
+toolExecutionId: {
 type: DataTypes.UUID,
 allowNull: true,
 },

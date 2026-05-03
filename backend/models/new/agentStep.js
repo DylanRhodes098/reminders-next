@@ -14,6 +14,10 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+iteration: {
+type: DataTypes.INTEGER,
+allowNull: true,
+},
 createdAt: {
 type: DataTypes.DATE,
 allowNull: false,

@@ -4,6 +4,6 @@ id {
 
 HAS MANY
 messages {
-    role ; ENUM ('system' | 'user' | 'assistant') 
+    role : ENUM ('system' | 'user' | 'assistant') 
     content : string 
 }

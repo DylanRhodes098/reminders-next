@@ -1,19 +1,19 @@
 --- RELATIONSHIP RULES ---
 
 HASONE means:
-Parent.hasOne(Child)
-Child.belongsTo(Parent)
+parent.hasOne(child)
+child.belongsTo(parent)
 
 HASMANY means:
-Parent.hasMany(Child)
-Child.belongsTo(Parent)
+parent.hasMany(child)
+child.belongsTo(parent)
 
 Fields like name, content, key, value, data, success, error, reason, shouldTerminate are model columns, not relationships.
 
 Use camelCase foreign keys:
-AgentConfig -> agentConfigId
-ToolRegistry -> toolRegistryId
-AgentStep -> agentStepId
+agentConfig -> agentConfigId
+toolRegistry -> toolRegistryId
+agentStep -> agentStepId
 
 Use plural aliases for HASMANY.
 Use singular aliases for HASONE.
@@ -21,7 +21,7 @@ Use singular aliases for HASONE.
 --- AGENT ---
 
 agentConfig HASMANY = [
-  goal
+  goals
 ]
 
 agentConfig HASONE = [
@@ -38,17 +38,17 @@ language HASONE = [
 ]
 
 toolRegistry HASMANY = [
-  tool
+  tools
 ]
 
 userRequest HASMANY = [
-  message
+  messages
 ]
 
 buildPromptToLlm HASMANY = [
-  goal
-  action
-  memory
+  goals
+  actions
+  memories
 ]
 
 buildPromptToLlm HASONE = [
@@ -56,18 +56,18 @@ buildPromptToLlm HASONE = [
 ]
 
 receivePromptFromLlm HASMANY = [
-  message
-  action
-  toolCallRequest
+  messages
+  actions
+  toolCallRequests
 ]
 
 buildResponseToUser HASMANY = [
-  message
+  messages
 ]
 
-tool HASMANY = [
-  toolParameter
-  tag
+tools HASMANY = [
+  toolParameters
+  tags
 ]
 
 --- LLM ---
@@ -82,8 +82,8 @@ generateResponse HASONE = [
 ]
 
 promptInput HASMANY = [
-  message
-  tool
+  messages
+  tools
 ]
 
 promptInput HASONE = [
@@ -91,8 +91,8 @@ promptInput HASONE = [
 ]
 
 promptOutput HASMANY = [
-  message
-  toolCallRequest
+  messages
+  toolCallRequests
 ]
 
 --- AGENT STEP ---
@@ -107,7 +107,7 @@ agentStep HASONE = [
 ]
 
 agentStep HASMANY = [
-  toolExecution
+  toolExecutions
 ]
 
 input HASONE = [
@@ -115,18 +115,18 @@ input HASONE = [
 ]
 
 input HASMANY = [
-  previousToolResult
-  memory
-  goal
+  previousToolResults
+  memories
+  goals
 ]
 
-previousToolResult HASONE = [
+previousToolResults HASONE = [
   toolResult
 ]
 
 builtPromptToLlm HASMANY = [
-  message
-  tool
+  messages
+  tools
 ]
 
 builtPromptToLlm HASONE = [
@@ -134,8 +134,8 @@ builtPromptToLlm HASONE = [
 ]
 
 llmResponse HASMANY = [
-  message
-  toolCallRequest
+  messages
+  toolCallRequests
 ]
 
 toolExecution HASONE = [
@@ -144,10 +144,10 @@ toolExecution HASONE = [
 ]
 
 buildResponseToUser HASMANY = [
-  message
+  messages
 ]
 
 stateUpdate HASMANY = [
-  memoryWrite
-  action
+  memoryWrites
+  actions
 ]

@@ -14,30 +14,27 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+promptId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 temperature: {
 type: DataTypes.FLOAT,
 allowNull: true,
 },
-
 maxTokens: {
 type: DataTypes.INTEGER,
 allowNull: true,
 },
-
 requestId: {
 type: DataTypes.STRING,
 allowNull: true,
 },
-
 promptInputId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
 builtPromptToLlmId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-llmConfigId: {
 type: DataTypes.UUID,
 allowNull: true,
 },

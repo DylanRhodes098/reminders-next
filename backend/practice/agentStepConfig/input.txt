@@ -9,12 +9,12 @@
 
 HASMANY
     previousToolResults? {
-       sucess
+       success
 error 
     } 
 
-    memory { 
-       Memory[] 
+    memories { 
+       memory[] 
     } 
 
 HASMANY

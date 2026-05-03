@@ -10,14 +10,14 @@ goals {
 HAS MANY
 actions {  
     toolName: string
-   args: ToolArgs = {}
+   args: toolArgs = {}
    }
 
 HAS MANY
-memory {
+memories {
     type : ENUM('user', 'assistant', 'environment', 'system')
     content : string
-    timestamp? : Date
-    metadata? : record <string, unkonw>
+    timestamp? : date
+    metadata? : record <string, unknown>
 }
 

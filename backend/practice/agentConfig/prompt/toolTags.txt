@@ -3,5 +3,5 @@ id {
 }
 
 name { 
-    String
+    string
 }

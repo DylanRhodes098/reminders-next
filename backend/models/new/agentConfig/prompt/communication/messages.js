@@ -2,8 +2,8 @@ import sequelize from "../../../../../lib/db.js";
 import { Model, DataTypes } from "sequelize";
 export class Messages extends Model {}
 export const hotReloads = () => {
-if (sequelize.models.AgentConfigPromptCommunicationMessages) {
-return sequelize.models.AgentConfigPromptCommunicationMessages;
+if (sequelize.models.AgentConfigMessages) {
+return sequelize.models.AgentConfigMessages;
 }
 };
 Messages.init(
@@ -14,16 +14,18 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+communicationId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 role: {
 type: DataTypes.STRING,
 allowNull: true,
 },
-
 content: {
 type: DataTypes.TEXT,
 allowNull: true,
 },
-
 userRequestId: {
 type: DataTypes.UUID,
 allowNull: true,
@@ -32,23 +34,7 @@ receivePromptFromLlmId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
-agentConfigPromptBuildResponseToUserId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-builtPromptToLlmId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-agentStepBuildResponseToUserId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-llmResponseId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-agentConfigId: {
+agentConfigBuildResponseToUserId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
@@ -65,8 +51,8 @@ defaultValue: DataTypes.NOW,
 },
 {
 sequelize,
-modelName: "AgentConfigPromptCommunicationMessages",
-tableName: "agent_config_prompt_communication_messages",
+modelName: "AgentConfigMessages",
+tableName: "agent_config_messages",
 freezeTableName: true,
 timestamps: true,
 underscored: false,

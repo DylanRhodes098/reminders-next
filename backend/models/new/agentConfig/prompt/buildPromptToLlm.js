@@ -14,11 +14,11 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
-languageId: {
+promptId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
-agentConfigId: {
+languageId: {
 type: DataTypes.UUID,
 allowNull: true,
 },

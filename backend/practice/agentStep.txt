@@ -6,17 +6,17 @@ iteration {
 
 HASMANY
   input {
-    userRequest?: UserRequest
-    previousToolResults?: ToolResult[]
-    memory?: Memory[]
-    goals?: Goal[]
+    userRequest?: userRequest
+    previousToolResults?: toolResult[]
+    memories?: memory[]
+    goals?: goal[]
   }
 
-HASMNAY
+HASMANY
   builtPromptToLlm {
-    messages: Message[]
-    tools: ToolDefinition[]
-    metadata: Metadata
+    messages: message[]
+    tools: toolDefinition[]
+    metadata: metadata
   }
 
 HASMANY
@@ -27,21 +27,21 @@ HASMANY
 
 HASMANY
   toolExecutions {
-    toolCallRequest: ToolCallRequest
-    toolResult: ToolResult
+    toolCallRequests: toolCallRequest[]
+    toolResults: toolResult[]
     success: boolean
     error?: string
   }[]
 
 HASMANY
   buildResponseToUser {
-    messages: Message[]
+    messages: message[]
   }
 
 HASMANY
   stateUpdate {
-    memoryWrites: Memory[]
-    actions: Action[]
+    memoryWrites: memory[]
+    actions: action[]
   }
 
 HASMANY

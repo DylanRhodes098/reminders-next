@@ -4,5 +4,5 @@ id {
 
 messages {
  role: ENUM ('system' | 'user' | 'assistant')
- content ; string
+ content : string
 }

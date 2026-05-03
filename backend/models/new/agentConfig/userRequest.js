@@ -14,7 +14,7 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
-inputId: {
+agentConfigId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
@@ -22,7 +22,7 @@ buildPromptToLlmId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
-agentConfigId: {
+inputId: {
 type: DataTypes.UUID,
 allowNull: true,
 },

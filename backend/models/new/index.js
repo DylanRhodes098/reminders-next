@@ -1,657 +1,612 @@
 import sequelize from "../../lib/db.js";
+import AgentConfigModel from "./agentConfig.js";
+import EnvironmentModel from "./agentConfig/environment.js";
+import LanguageModel from "./agentConfig/language.js";
+import BuildPromptToLlmModel from "./agentConfig/prompt/buildPromptToLlm.js";
+import AgentConfigBuildResponseToUserModel from "./agentConfig/prompt/buildResponseToUser.js";
+import ActionsModel from "./agentConfig/prompt/communication/actions.js";
+import GoalModel from "./agentConfig/prompt/communication/goal.js";
+import MemoryModel from "./agentConfig/prompt/communication/memory.js";
+import AgentConfigMessagesModel from "./agentConfig/prompt/communication/messages.js";
+import ReceivePromptFromLlmModel from "./agentConfig/prompt/receivePromptFromLlm.js";
+import AgentConfigToolCallsRequestModel from "./agentConfig/prompt/toolCallsRequest.js";
+import ToolParametersModel from "./agentConfig/prompt/toolParameters.js";
+import PropertiesModel from "./agentConfig/prompt/toolParameters/properties.js";
+import ToolResultModel from "./agentConfig/prompt/toolResult.js";
+import ToolTagsModel from "./agentConfig/prompt/toolTags.js";
+import AgentConfigToolExecutionsModel from "./agentConfig/toolExecutions.js";
+import ToolRegistryModel from "./agentConfig/toolRegistry.js";
+import ToolsModel from "./agentConfig/tools.js";
+import UserRequestModel from "./agentConfig/userRequest.js";
+import AgentStepModel from "./agentStep.js";
+import AgentStepConfigBuildResponseToUserModel from "./agentStepConfig/buildResponseToUser.js";
+import BuiltPromptToLlmModel from "./agentStepConfig/builtPromptToLlm.js";
+import ActionModel from "./agentStepConfig/communication/action.js";
+import InputModel from "./agentStepConfig/input.js";
+import LlmResponseModel from "./agentStepConfig/llmResponse.js";
+import StateUpdateModel from "./agentStepConfig/stateUpdate.js";
+import AgentStepConfigToolExecutionsModel from "./agentStepConfig/toolExecutions.js";
+import LlmConfigModel from "./llmConfig.js";
+import LlmConfigMessagesModel from "./llmConfig/prompt/messages.js";
+import MetaDataModel from "./llmConfig/prompt/metaData.js";
+import LlmConfigToolCallsRequestModel from "./llmConfig/prompt/toolCallsRequest.js";
+import PromptInputModel from "./llmConfig/promptInput.js";
+import PromptOutputModel from "./llmConfig/promptOutput.js";
 
-import AgentConfig from "./agentConfig.js";
-import LlmConfig from "./llmConfig.js";
-import AgentStep from "./agentStep.js";
-
-import Language from "./agentConfig/language.js";
-import ToolRegistry from "./agentConfig/toolRegistry.js";
-import UserRequest from "./agentConfig/userRequest.js";
-import Environment from "./agentConfig/environment.js";
-import Tools from "./agentConfig/tools.js";
-import Goal from "./agentConfig/prompt/communication/goal.js";
-import Memory from "./agentConfig/prompt/communication/memory.js";
-import Actions from "./agentConfig/prompt/communication/actions.js";
-import AgentConfigPromptCommunicationMessages from "./agentConfig/prompt/communication/messages.js";
-import BuildPromptToLlm from "./agentConfig/prompt/buildPromptToLlm.js";
-import ReceivePromptFromLlm from "./agentConfig/prompt/receivePromptFromLlm.js";
-import AgentConfigPromptBuildResponseToUser from "./agentConfig/prompt/buildResponseToUser.js";
-import ToolParameters from "./agentConfig/prompt/toolParameters.js";
-import Properties from "./agentConfig/prompt/toolParameters/properties.js";
-import ToolTags from "./agentConfig/prompt/toolTags.js";
-import ToolResult from "./agentConfig/prompt/toolResult.js";
-import AgentConfigPromptToolCallsRequest from "./agentConfig/prompt/toolCallsRequest.js";
-import AgentConfigToolExecutions from "./agentConfig/toolExecutions.js";
-
-import PromptOutput from "./llmConfig/promptOutput.js";
-import PromptInput from "./llmConfig/promptInput.js";
-import MetaData from "./llmConfig/prompt/metaData.js";
-import LlmConfigPromptMessages from "./llmConfig/prompt/messages.js";
-import LlmConfigPromptToolCallsRequest from "./llmConfig/prompt/toolCallsRequest.js";
-
-import Input from "./agentStepConfig/input.js";
-import BuiltPromptToLlm from "./agentStepConfig/builtPromptToLlm.js";
-import LlmResponse from "./agentStepConfig/llmResponse.js";
-import AgentStepBuildResponseToUser from "./agentStepConfig/buildResponseToUser.js";
-import StateUpdate from "./agentStepConfig/stateUpdate.js";
-import Action from "./agentStepConfig/communication/action.js";
-import AgentStepToolExecutions from "./agentStepConfig/toolExecutions.js";
-
-// --- AGENT ---
-
-if (!AgentConfig.associations?.goals)
-  AgentConfig.hasMany(Goal, {
+if (!AgentConfigModel.associations?.goals)
+  AgentConfigModel.hasMany(GoalModel, {
     foreignKey: "agentConfigId",
     as: "goals",
   });
 
-if (!Goal.associations?.agentConfig)
-  Goal.belongsTo(AgentConfig, {
+if (!GoalModel.associations?.agentConfig)
+  GoalModel.belongsTo(AgentConfigModel, {
     foreignKey: "agentConfigId",
     as: "agentConfig",
   });
 
-if (!AgentConfig.associations?.language)
-  AgentConfig.hasOne(Language, {
+if (!AgentConfigModel.associations?.language)
+  AgentConfigModel.hasOne(LanguageModel, {
     foreignKey: "agentConfigId",
     as: "language",
   });
 
-if (!Language.associations?.agentConfig)
-  Language.belongsTo(AgentConfig, {
+if (!LanguageModel.associations?.agentConfig)
+  LanguageModel.belongsTo(AgentConfigModel, {
     foreignKey: "agentConfigId",
     as: "agentConfig",
   });
 
-if (!AgentConfig.associations?.toolRegistry)
-  AgentConfig.hasOne(ToolRegistry, {
+if (!AgentConfigModel.associations?.toolRegistry)
+  AgentConfigModel.hasOne(ToolRegistryModel, {
     foreignKey: "agentConfigId",
     as: "toolRegistry",
   });
 
-if (!ToolRegistry.associations?.agentConfig)
-  ToolRegistry.belongsTo(AgentConfig, {
+if (!ToolRegistryModel.associations?.agentConfig)
+  ToolRegistryModel.belongsTo(AgentConfigModel, {
     foreignKey: "agentConfigId",
     as: "agentConfig",
   });
 
-if (!AgentConfig.associations?.userRequest)
-  AgentConfig.hasOne(UserRequest, {
+if (!AgentConfigModel.associations?.userRequest)
+  AgentConfigModel.hasOne(UserRequestModel, {
     foreignKey: "agentConfigId",
     as: "userRequest",
   });
 
-if (!UserRequest.associations?.agentConfig)
-  UserRequest.belongsTo(AgentConfig, {
+if (!UserRequestModel.associations?.agentConfig)
+  UserRequestModel.belongsTo(AgentConfigModel, {
     foreignKey: "agentConfigId",
     as: "agentConfig",
   });
 
-if (!AgentConfig.associations?.environment)
-  AgentConfig.hasOne(Environment, {
+if (!AgentConfigModel.associations?.environment)
+  AgentConfigModel.hasOne(EnvironmentModel, {
     foreignKey: "agentConfigId",
     as: "environment",
   });
 
-if (!Environment.associations?.agentConfig)
-  Environment.belongsTo(AgentConfig, {
+if (!EnvironmentModel.associations?.agentConfig)
+  EnvironmentModel.belongsTo(AgentConfigModel, {
     foreignKey: "agentConfigId",
     as: "agentConfig",
   });
 
-if (!Language.associations?.buildPromptToLlm)
-  Language.hasOne(BuildPromptToLlm, {
+if (!LanguageModel.associations?.buildPromptToLlm)
+  LanguageModel.hasOne(BuildPromptToLlmModel, {
     foreignKey: "languageId",
     as: "buildPromptToLlm",
   });
 
-if (!BuildPromptToLlm.associations?.language)
-  BuildPromptToLlm.belongsTo(Language, {
+if (!BuildPromptToLlmModel.associations?.language)
+  BuildPromptToLlmModel.belongsTo(LanguageModel, {
     foreignKey: "languageId",
     as: "language",
   });
 
-if (!Language.associations?.receivePromptFromLlm)
-  Language.hasOne(ReceivePromptFromLlm, {
+if (!LanguageModel.associations?.receivePromptFromLlm)
+  LanguageModel.hasOne(ReceivePromptFromLlmModel, {
     foreignKey: "languageId",
     as: "receivePromptFromLlm",
   });
 
-if (!ReceivePromptFromLlm.associations?.language)
-  ReceivePromptFromLlm.belongsTo(Language, {
+if (!ReceivePromptFromLlmModel.associations?.language)
+  ReceivePromptFromLlmModel.belongsTo(LanguageModel, {
     foreignKey: "languageId",
     as: "language",
   });
 
-if (!Language.associations?.buildResponseToUser)
-  Language.hasOne(AgentConfigPromptBuildResponseToUser, {
+if (!LanguageModel.associations?.buildResponseToUser)
+  LanguageModel.hasOne(AgentConfigBuildResponseToUserModel, {
     foreignKey: "languageId",
     as: "buildResponseToUser",
   });
 
-if (!AgentConfigPromptBuildResponseToUser.associations?.language)
-  AgentConfigPromptBuildResponseToUser.belongsTo(Language, {
+if (!AgentConfigBuildResponseToUserModel.associations?.language)
+  AgentConfigBuildResponseToUserModel.belongsTo(LanguageModel, {
     foreignKey: "languageId",
     as: "language",
   });
 
-if (!ToolRegistry.associations?.tools)
-  ToolRegistry.hasMany(Tools, {
+if (!ToolRegistryModel.associations?.tools)
+  ToolRegistryModel.hasMany(ToolsModel, {
     foreignKey: "toolRegistryId",
     as: "tools",
   });
 
-if (!Tools.associations?.toolRegistry)
-  Tools.belongsTo(ToolRegistry, {
+if (!ToolsModel.associations?.toolRegistry)
+  ToolsModel.belongsTo(ToolRegistryModel, {
     foreignKey: "toolRegistryId",
     as: "toolRegistry",
   });
 
-if (!UserRequest.associations?.messages)
-  UserRequest.hasMany(AgentConfigPromptCommunicationMessages, {
+if (!UserRequestModel.associations?.messages)
+  UserRequestModel.hasMany(AgentConfigMessagesModel, {
     foreignKey: "userRequestId",
     as: "messages",
   });
 
-if (!AgentConfigPromptCommunicationMessages.associations?.userRequest)
-  AgentConfigPromptCommunicationMessages.belongsTo(UserRequest, {
+if (!AgentConfigMessagesModel.associations?.userRequest)
+  AgentConfigMessagesModel.belongsTo(UserRequestModel, {
     foreignKey: "userRequestId",
     as: "userRequest",
   });
 
-if (!BuildPromptToLlm.associations?.goals)
-  BuildPromptToLlm.hasMany(Goal, {
+if (!BuildPromptToLlmModel.associations?.goals)
+  BuildPromptToLlmModel.hasMany(GoalModel, {
     foreignKey: "buildPromptToLlmId",
     as: "goals",
   });
 
-if (!Goal.associations?.buildPromptToLlm)
-  Goal.belongsTo(BuildPromptToLlm, {
+if (!GoalModel.associations?.buildPromptToLlm)
+  GoalModel.belongsTo(BuildPromptToLlmModel, {
     foreignKey: "buildPromptToLlmId",
     as: "buildPromptToLlm",
   });
 
-if (!BuildPromptToLlm.associations?.actions)
-  BuildPromptToLlm.hasMany(Actions, {
+if (!BuildPromptToLlmModel.associations?.actions)
+  BuildPromptToLlmModel.hasMany(ActionsModel, {
     foreignKey: "buildPromptToLlmId",
     as: "actions",
   });
 
-if (!Actions.associations?.buildPromptToLlm)
-  Actions.belongsTo(BuildPromptToLlm, {
+if (!ActionsModel.associations?.buildPromptToLlm)
+  ActionsModel.belongsTo(BuildPromptToLlmModel, {
     foreignKey: "buildPromptToLlmId",
     as: "buildPromptToLlm",
   });
 
-if (!BuildPromptToLlm.associations?.memories)
-  BuildPromptToLlm.hasMany(Memory, {
+if (!BuildPromptToLlmModel.associations?.memories)
+  BuildPromptToLlmModel.hasMany(MemoryModel, {
     foreignKey: "buildPromptToLlmId",
     as: "memories",
   });
 
-if (!Memory.associations?.buildPromptToLlm)
-  Memory.belongsTo(BuildPromptToLlm, {
+if (!MemoryModel.associations?.buildPromptToLlm)
+  MemoryModel.belongsTo(BuildPromptToLlmModel, {
     foreignKey: "buildPromptToLlmId",
     as: "buildPromptToLlm",
   });
 
-if (!BuildPromptToLlm.associations?.userRequest)
-  BuildPromptToLlm.hasOne(UserRequest, {
+if (!BuildPromptToLlmModel.associations?.userRequest)
+  BuildPromptToLlmModel.hasOne(UserRequestModel, {
     foreignKey: "buildPromptToLlmId",
     as: "userRequest",
   });
 
-if (!UserRequest.associations?.buildPromptToLlm)
-  UserRequest.belongsTo(BuildPromptToLlm, {
+if (!UserRequestModel.associations?.buildPromptToLlm)
+  UserRequestModel.belongsTo(BuildPromptToLlmModel, {
     foreignKey: "buildPromptToLlmId",
     as: "buildPromptToLlm",
   });
 
-if (!ReceivePromptFromLlm.associations?.messages)
-  ReceivePromptFromLlm.hasMany(AgentConfigPromptCommunicationMessages, {
+if (!ReceivePromptFromLlmModel.associations?.messages)
+  ReceivePromptFromLlmModel.hasMany(AgentConfigMessagesModel, {
     foreignKey: "receivePromptFromLlmId",
     as: "messages",
   });
 
-if (!AgentConfigPromptCommunicationMessages.associations?.receivePromptFromLlm)
-  AgentConfigPromptCommunicationMessages.belongsTo(ReceivePromptFromLlm, {
+if (!AgentConfigMessagesModel.associations?.receivePromptFromLlm)
+  AgentConfigMessagesModel.belongsTo(ReceivePromptFromLlmModel, {
     foreignKey: "receivePromptFromLlmId",
     as: "receivePromptFromLlm",
   });
 
-if (!ReceivePromptFromLlm.associations?.actions)
-  ReceivePromptFromLlm.hasMany(Actions, {
+if (!ReceivePromptFromLlmModel.associations?.actions)
+  ReceivePromptFromLlmModel.hasMany(ActionsModel, {
     foreignKey: "receivePromptFromLlmId",
     as: "actions",
   });
 
-if (!Actions.associations?.receivePromptFromLlm)
-  Actions.belongsTo(ReceivePromptFromLlm, {
+if (!ActionsModel.associations?.receivePromptFromLlm)
+  ActionsModel.belongsTo(ReceivePromptFromLlmModel, {
     foreignKey: "receivePromptFromLlmId",
     as: "receivePromptFromLlm",
   });
 
-if (!ReceivePromptFromLlm.associations?.toolCallRequests)
-  ReceivePromptFromLlm.hasMany(AgentConfigPromptToolCallsRequest, {
+if (!ReceivePromptFromLlmModel.associations?.toolCallRequests)
+  ReceivePromptFromLlmModel.hasMany(AgentConfigToolCallsRequestModel, {
     foreignKey: "receivePromptFromLlmId",
     as: "toolCallRequests",
   });
 
-if (!AgentConfigPromptToolCallsRequest.associations?.receivePromptFromLlm)
-  AgentConfigPromptToolCallsRequest.belongsTo(ReceivePromptFromLlm, {
+if (!AgentConfigToolCallsRequestModel.associations?.receivePromptFromLlm)
+  AgentConfigToolCallsRequestModel.belongsTo(ReceivePromptFromLlmModel, {
     foreignKey: "receivePromptFromLlmId",
     as: "receivePromptFromLlm",
   });
 
-if (!AgentConfigPromptBuildResponseToUser.associations?.messages)
-  AgentConfigPromptBuildResponseToUser.hasMany(AgentConfigPromptCommunicationMessages, {
-    foreignKey: "agentConfigPromptBuildResponseToUserId",
+if (!AgentConfigBuildResponseToUserModel.associations?.messages)
+  AgentConfigBuildResponseToUserModel.hasMany(AgentConfigMessagesModel, {
+    foreignKey: "agentConfigBuildResponseToUserId",
     as: "messages",
   });
 
-if (!AgentConfigPromptCommunicationMessages.associations?.agentConfigPromptBuildResponseToUser)
-  AgentConfigPromptCommunicationMessages.belongsTo(AgentConfigPromptBuildResponseToUser, {
-    foreignKey: "agentConfigPromptBuildResponseToUserId",
-    as: "agentConfigPromptBuildResponseToUser",
+if (!AgentConfigMessagesModel.associations?.buildResponseToUser)
+  AgentConfigMessagesModel.belongsTo(AgentConfigBuildResponseToUserModel, {
+    foreignKey: "agentConfigBuildResponseToUserId",
+    as: "buildResponseToUser",
   });
 
-if (!Tools.associations?.toolParameters)
-  Tools.hasMany(ToolParameters, {
+if (!ToolsModel.associations?.toolParameters)
+  ToolsModel.hasMany(ToolParametersModel, {
     foreignKey: "toolsId",
     as: "toolParameters",
   });
 
-if (!ToolParameters.associations?.tools)
-  ToolParameters.belongsTo(Tools, {
+if (!ToolParametersModel.associations?.tools)
+  ToolParametersModel.belongsTo(ToolsModel, {
     foreignKey: "toolsId",
     as: "tools",
   });
 
-if (!Tools.associations?.tags)
-  Tools.hasMany(ToolTags, {
+if (!ToolsModel.associations?.tags)
+  ToolsModel.hasMany(ToolTagsModel, {
     foreignKey: "toolsId",
     as: "tags",
   });
 
-if (!ToolTags.associations?.tools)
-  ToolTags.belongsTo(Tools, {
+if (!ToolTagsModel.associations?.tools)
+  ToolTagsModel.belongsTo(ToolsModel, {
     foreignKey: "toolsId",
     as: "tools",
   });
 
-// --- LLM ---
-
-if (!LlmConfig.associations?.generateResponse)
-  LlmConfig.hasOne(PromptOutput, {
-    foreignKey: "llmConfigId",
-    as: "generateResponse",
-  });
-
-if (!PromptOutput.associations?.llmConfig)
-  PromptOutput.belongsTo(LlmConfig, {
-    foreignKey: "llmConfigId",
-    as: "llmConfig",
-  });
-
-if (!PromptOutput.associations?.promptInput)
-  PromptOutput.hasOne(PromptInput, {
-    foreignKey: "promptOutputId",
-    as: "promptInput",
-  });
-
-if (!PromptInput.associations?.promptOutput)
-  PromptInput.belongsTo(PromptOutput, {
-    foreignKey: "promptOutputId",
-    as: "promptOutput",
-  });
-
-if (!PromptInput.associations?.messages)
-  PromptInput.hasMany(LlmConfigPromptMessages, {
+if (!PromptInputModel.associations?.messages)
+  PromptInputModel.hasMany(LlmConfigMessagesModel, {
     foreignKey: "promptInputId",
     as: "messages",
   });
 
-if (!LlmConfigPromptMessages.associations?.promptInput)
-  LlmConfigPromptMessages.belongsTo(PromptInput, {
+if (!LlmConfigMessagesModel.associations?.promptInput)
+  LlmConfigMessagesModel.belongsTo(PromptInputModel, {
     foreignKey: "promptInputId",
     as: "promptInput",
   });
 
-if (!PromptInput.associations?.tools)
-  PromptInput.hasMany(Tools, {
+if (!PromptInputModel.associations?.tools)
+  PromptInputModel.hasMany(ToolsModel, {
     foreignKey: "promptInputId",
     as: "tools",
   });
 
-if (!Tools.associations?.promptInput)
-  Tools.belongsTo(PromptInput, {
+if (!ToolsModel.associations?.promptInput)
+  ToolsModel.belongsTo(PromptInputModel, {
     foreignKey: "promptInputId",
     as: "promptInput",
   });
 
-if (!PromptInput.associations?.metadata)
-  PromptInput.hasOne(MetaData, {
+if (!PromptInputModel.associations?.metadata)
+  PromptInputModel.hasOne(MetaDataModel, {
     foreignKey: "promptInputId",
     as: "metadata",
   });
 
-if (!MetaData.associations?.promptInput)
-  MetaData.belongsTo(PromptInput, {
+if (!MetaDataModel.associations?.promptInput)
+  MetaDataModel.belongsTo(PromptInputModel, {
     foreignKey: "promptInputId",
     as: "promptInput",
   });
 
-if (!PromptOutput.associations?.messages)
-  PromptOutput.hasMany(LlmConfigPromptMessages, {
+if (!PromptOutputModel.associations?.messages)
+  PromptOutputModel.hasMany(LlmConfigMessagesModel, {
     foreignKey: "promptOutputId",
     as: "messages",
   });
 
-if (!LlmConfigPromptMessages.associations?.promptOutput)
-  LlmConfigPromptMessages.belongsTo(PromptOutput, {
+if (!LlmConfigMessagesModel.associations?.promptOutput)
+  LlmConfigMessagesModel.belongsTo(PromptOutputModel, {
     foreignKey: "promptOutputId",
     as: "promptOutput",
   });
 
-if (!PromptOutput.associations?.toolCallRequests)
-  PromptOutput.hasMany(LlmConfigPromptToolCallsRequest, {
+if (!PromptOutputModel.associations?.toolCallRequests)
+  PromptOutputModel.hasMany(LlmConfigToolCallsRequestModel, {
     foreignKey: "promptOutputId",
     as: "toolCallRequests",
   });
 
-if (!LlmConfigPromptToolCallsRequest.associations?.promptOutput)
-  LlmConfigPromptToolCallsRequest.belongsTo(PromptOutput, {
+if (!LlmConfigToolCallsRequestModel.associations?.promptOutput)
+  LlmConfigToolCallsRequestModel.belongsTo(PromptOutputModel, {
     foreignKey: "promptOutputId",
     as: "promptOutput",
   });
 
-// --- AGENT STEP ---
-
-if (!AgentStep.associations?.input)
-  AgentStep.hasOne(Input, {
+if (!AgentStepModel.associations?.input)
+  AgentStepModel.hasOne(InputModel, {
     foreignKey: "agentStepId",
     as: "input",
   });
 
-if (!Input.associations?.agentStep)
-  Input.belongsTo(AgentStep, {
+if (!InputModel.associations?.agentStep)
+  InputModel.belongsTo(AgentStepModel, {
     foreignKey: "agentStepId",
     as: "agentStep",
   });
 
-if (!AgentStep.associations?.builtPromptToLlm)
-  AgentStep.hasOne(BuiltPromptToLlm, {
+if (!AgentStepModel.associations?.builtPromptToLlm)
+  AgentStepModel.hasOne(BuiltPromptToLlmModel, {
     foreignKey: "agentStepId",
     as: "builtPromptToLlm",
   });
 
-if (!BuiltPromptToLlm.associations?.agentStep)
-  BuiltPromptToLlm.belongsTo(AgentStep, {
+if (!BuiltPromptToLlmModel.associations?.agentStep)
+  BuiltPromptToLlmModel.belongsTo(AgentStepModel, {
     foreignKey: "agentStepId",
     as: "agentStep",
   });
 
-if (!AgentStep.associations?.llmResponse)
-  AgentStep.hasOne(LlmResponse, {
+if (!AgentStepModel.associations?.llmResponse)
+  AgentStepModel.hasOne(LlmResponseModel, {
     foreignKey: "agentStepId",
     as: "llmResponse",
   });
 
-if (!LlmResponse.associations?.agentStep)
-  LlmResponse.belongsTo(AgentStep, {
+if (!LlmResponseModel.associations?.agentStep)
+  LlmResponseModel.belongsTo(AgentStepModel, {
     foreignKey: "agentStepId",
     as: "agentStep",
   });
 
-if (!AgentStep.associations?.buildResponseToUser)
-  AgentStep.hasOne(AgentStepBuildResponseToUser, {
+if (!AgentStepModel.associations?.buildResponseToUser)
+  AgentStepModel.hasOne(AgentStepConfigBuildResponseToUserModel, {
     foreignKey: "agentStepId",
     as: "buildResponseToUser",
   });
 
-if (!AgentStepBuildResponseToUser.associations?.agentStep)
-  AgentStepBuildResponseToUser.belongsTo(AgentStep, {
+if (!AgentStepConfigBuildResponseToUserModel.associations?.agentStep)
+  AgentStepConfigBuildResponseToUserModel.belongsTo(AgentStepModel, {
     foreignKey: "agentStepId",
     as: "agentStep",
   });
 
-if (!AgentStep.associations?.stateUpdate)
-  AgentStep.hasOne(StateUpdate, {
+if (!AgentStepModel.associations?.stateUpdate)
+  AgentStepModel.hasOne(StateUpdateModel, {
     foreignKey: "agentStepId",
     as: "stateUpdate",
   });
 
-if (!StateUpdate.associations?.agentStep)
-  StateUpdate.belongsTo(AgentStep, {
+if (!StateUpdateModel.associations?.agentStep)
+  StateUpdateModel.belongsTo(AgentStepModel, {
     foreignKey: "agentStepId",
     as: "agentStep",
   });
 
-if (!AgentStep.associations?.toolExecutions)
-  AgentStep.hasMany(AgentStepToolExecutions, {
+if (!AgentStepModel.associations?.toolExecutions)
+  AgentStepModel.hasMany(AgentStepConfigToolExecutionsModel, {
     foreignKey: "agentStepId",
     as: "toolExecutions",
   });
 
-if (!AgentStepToolExecutions.associations?.agentStep)
-  AgentStepToolExecutions.belongsTo(AgentStep, {
+if (!AgentStepConfigToolExecutionsModel.associations?.agentStep)
+  AgentStepConfigToolExecutionsModel.belongsTo(AgentStepModel, {
     foreignKey: "agentStepId",
     as: "agentStep",
   });
 
-if (!Input.associations?.userRequest)
-  Input.hasOne(UserRequest, {
+if (!InputModel.associations?.userRequest)
+  InputModel.hasOne(UserRequestModel, {
     foreignKey: "inputId",
     as: "userRequest",
   });
 
-if (!UserRequest.associations?.input)
-  UserRequest.belongsTo(Input, {
+if (!UserRequestModel.associations?.input)
+  UserRequestModel.belongsTo(InputModel, {
     foreignKey: "inputId",
     as: "input",
   });
 
-if (!Input.associations?.memories)
-  Input.hasMany(Memory, {
+if (!InputModel.associations?.memories)
+  InputModel.hasMany(MemoryModel, {
     foreignKey: "inputId",
     as: "memories",
   });
 
-if (!Memory.associations?.input)
-  Memory.belongsTo(Input, {
+if (!MemoryModel.associations?.input)
+  MemoryModel.belongsTo(InputModel, {
     foreignKey: "inputId",
     as: "input",
   });
 
-if (!Input.associations?.goals)
-  Input.hasMany(Goal, {
+if (!InputModel.associations?.goals)
+  InputModel.hasMany(GoalModel, {
     foreignKey: "inputId",
     as: "goals",
   });
 
-if (!Goal.associations?.input)
-  Goal.belongsTo(Input, {
+if (!GoalModel.associations?.input)
+  GoalModel.belongsTo(InputModel, {
     foreignKey: "inputId",
     as: "input",
   });
 
-if (!BuiltPromptToLlm.associations?.messages)
-  BuiltPromptToLlm.hasMany(AgentConfigPromptCommunicationMessages, {
+if (!BuiltPromptToLlmModel.associations?.messages)
+  BuiltPromptToLlmModel.hasMany(LlmConfigMessagesModel, {
     foreignKey: "builtPromptToLlmId",
     as: "messages",
   });
 
-if (!AgentConfigPromptCommunicationMessages.associations?.builtPromptToLlm)
-  AgentConfigPromptCommunicationMessages.belongsTo(BuiltPromptToLlm, {
+if (!LlmConfigMessagesModel.associations?.builtPromptToLlm)
+  LlmConfigMessagesModel.belongsTo(BuiltPromptToLlmModel, {
     foreignKey: "builtPromptToLlmId",
     as: "builtPromptToLlm",
   });
 
-if (!BuiltPromptToLlm.associations?.tools)
-  BuiltPromptToLlm.hasMany(Tools, {
+if (!BuiltPromptToLlmModel.associations?.tools)
+  BuiltPromptToLlmModel.hasMany(ToolsModel, {
     foreignKey: "builtPromptToLlmId",
     as: "tools",
   });
 
-if (!Tools.associations?.builtPromptToLlm)
-  Tools.belongsTo(BuiltPromptToLlm, {
+if (!ToolsModel.associations?.builtPromptToLlm)
+  ToolsModel.belongsTo(BuiltPromptToLlmModel, {
     foreignKey: "builtPromptToLlmId",
     as: "builtPromptToLlm",
   });
 
-if (!BuiltPromptToLlm.associations?.metadata)
-  BuiltPromptToLlm.hasOne(MetaData, {
+if (!BuiltPromptToLlmModel.associations?.metadata)
+  BuiltPromptToLlmModel.hasOne(MetaDataModel, {
     foreignKey: "builtPromptToLlmId",
     as: "metadata",
   });
 
-if (!MetaData.associations?.builtPromptToLlm)
-  MetaData.belongsTo(BuiltPromptToLlm, {
+if (!MetaDataModel.associations?.builtPromptToLlm)
+  MetaDataModel.belongsTo(BuiltPromptToLlmModel, {
     foreignKey: "builtPromptToLlmId",
     as: "builtPromptToLlm",
   });
 
-if (!LlmResponse.associations?.messages)
-  LlmResponse.hasMany(AgentConfigPromptCommunicationMessages, {
+if (!LlmResponseModel.associations?.messages)
+  LlmResponseModel.hasMany(LlmConfigMessagesModel, {
     foreignKey: "llmResponseId",
     as: "messages",
   });
 
-if (!AgentConfigPromptCommunicationMessages.associations?.llmResponse)
-  AgentConfigPromptCommunicationMessages.belongsTo(LlmResponse, {
+if (!LlmConfigMessagesModel.associations?.llmResponse)
+  LlmConfigMessagesModel.belongsTo(LlmResponseModel, {
     foreignKey: "llmResponseId",
     as: "llmResponse",
   });
 
-if (!LlmResponse.associations?.toolCallRequests)
-  LlmResponse.hasMany(AgentConfigPromptToolCallsRequest, {
+if (!LlmResponseModel.associations?.toolCallRequests)
+  LlmResponseModel.hasMany(LlmConfigToolCallsRequestModel, {
     foreignKey: "llmResponseId",
     as: "toolCallRequests",
   });
 
-if (!AgentConfigPromptToolCallsRequest.associations?.llmResponse)
-  AgentConfigPromptToolCallsRequest.belongsTo(LlmResponse, {
+if (!LlmConfigToolCallsRequestModel.associations?.llmResponse)
+  LlmConfigToolCallsRequestModel.belongsTo(LlmResponseModel, {
     foreignKey: "llmResponseId",
     as: "llmResponse",
   });
 
-if (!AgentStepToolExecutions.associations?.toolCallRequest)
-  AgentStepToolExecutions.hasOne(AgentConfigPromptToolCallsRequest, {
-    foreignKey: "toolExecutionsId",
+if (!AgentStepConfigToolExecutionsModel.associations?.toolCallRequest)
+  AgentStepConfigToolExecutionsModel.hasOne(AgentConfigToolCallsRequestModel, {
+    foreignKey: "toolExecutionId",
     as: "toolCallRequest",
   });
 
-if (!AgentConfigPromptToolCallsRequest.associations?.toolExecutions)
-  AgentConfigPromptToolCallsRequest.belongsTo(AgentStepToolExecutions, {
-    foreignKey: "toolExecutionsId",
-    as: "toolExecutions",
+if (!AgentConfigToolCallsRequestModel.associations?.toolExecution)
+  AgentConfigToolCallsRequestModel.belongsTo(AgentStepConfigToolExecutionsModel, {
+    foreignKey: "toolExecutionId",
+    as: "toolExecution",
   });
 
-if (!AgentStepToolExecutions.associations?.toolResult)
-  AgentStepToolExecutions.hasOne(ToolResult, {
-    foreignKey: "toolExecutionsId",
+if (!AgentStepConfigToolExecutionsModel.associations?.toolResult)
+  AgentStepConfigToolExecutionsModel.hasOne(ToolResultModel, {
+    foreignKey: "toolExecutionId",
     as: "toolResult",
   });
 
-if (!ToolResult.associations?.toolExecutions)
-  ToolResult.belongsTo(AgentStepToolExecutions, {
-    foreignKey: "toolExecutionsId",
-    as: "toolExecutions",
+if (!ToolResultModel.associations?.toolExecution)
+  ToolResultModel.belongsTo(AgentStepConfigToolExecutionsModel, {
+    foreignKey: "toolExecutionId",
+    as: "toolExecution",
   });
 
-if (!AgentStepBuildResponseToUser.associations?.messages)
-  AgentStepBuildResponseToUser.hasMany(AgentConfigPromptCommunicationMessages, {
-    foreignKey: "agentStepBuildResponseToUserId",
-    as: "messages",
-  });
-
-if (!AgentConfigPromptCommunicationMessages.associations?.agentStepBuildResponseToUser)
-  AgentConfigPromptCommunicationMessages.belongsTo(AgentStepBuildResponseToUser, {
-    foreignKey: "agentStepBuildResponseToUserId",
-    as: "agentStepBuildResponseToUser",
-  });
-
-if (!StateUpdate.associations?.actions)
-  StateUpdate.hasMany(Actions, {
+if (!StateUpdateModel.associations?.actions)
+  StateUpdateModel.hasMany(ActionModel, {
     foreignKey: "stateUpdateId",
     as: "actions",
   });
 
-if (!Actions.associations?.stateUpdate)
-  Actions.belongsTo(StateUpdate, {
+if (!ActionModel.associations?.stateUpdate)
+  ActionModel.belongsTo(StateUpdateModel, {
     foreignKey: "stateUpdateId",
     as: "stateUpdate",
   });
 
 export {
   sequelize,
-  AgentConfig,
-  LlmConfig,
-  AgentStep,
-  Language,
-  ToolRegistry,
-  UserRequest,
-  Environment,
-  Tools,
-  Goal,
-  Memory,
-  Actions,
-  AgentConfigPromptCommunicationMessages,
-  BuildPromptToLlm,
-  ReceivePromptFromLlm,
-  AgentConfigPromptBuildResponseToUser,
-  ToolParameters,
-  Properties,
-  ToolTags,
-  ToolResult,
-  AgentConfigPromptToolCallsRequest,
-  AgentConfigToolExecutions,
-  PromptOutput,
-  PromptInput,
-  MetaData,
-  LlmConfigPromptMessages,
-  LlmConfigPromptToolCallsRequest,
-  Input,
-  BuiltPromptToLlm,
-  LlmResponse,
-  AgentStepBuildResponseToUser,
-  StateUpdate,
-  Action,
-  AgentStepToolExecutions,
+  AgentConfigModel,
+  EnvironmentModel,
+  LanguageModel,
+  BuildPromptToLlmModel,
+  AgentConfigBuildResponseToUserModel,
+  ActionsModel,
+  GoalModel,
+  MemoryModel,
+  AgentConfigMessagesModel,
+  ReceivePromptFromLlmModel,
+  AgentConfigToolCallsRequestModel,
+  ToolParametersModel,
+  PropertiesModel,
+  ToolResultModel,
+  ToolTagsModel,
+  AgentConfigToolExecutionsModel,
+  ToolRegistryModel,
+  ToolsModel,
+  UserRequestModel,
+  AgentStepModel,
+  AgentStepConfigBuildResponseToUserModel,
+  BuiltPromptToLlmModel,
+  ActionModel,
+  InputModel,
+  LlmResponseModel,
+  StateUpdateModel,
+  AgentStepConfigToolExecutionsModel,
+  LlmConfigModel,
+  LlmConfigMessagesModel,
+  MetaDataModel,
+  LlmConfigToolCallsRequestModel,
+  PromptInputModel,
+  PromptOutputModel,
 };
 
 export default {
-  AgentConfig,
-  LlmConfig,
-  AgentStep,
-  Language,
-  ToolRegistry,
-  UserRequest,
-  Environment,
-  Tools,
-  Goal,
-  Memory,
-  Actions,
-  AgentConfigPromptCommunicationMessages,
-  BuildPromptToLlm,
-  ReceivePromptFromLlm,
-  AgentConfigPromptBuildResponseToUser,
-  ToolParameters,
-  Properties,
-  ToolTags,
-  ToolResult,
-  AgentConfigPromptToolCallsRequest,
-  AgentConfigToolExecutions,
-  PromptOutput,
-  PromptInput,
-  MetaData,
-  LlmConfigPromptMessages,
-  LlmConfigPromptToolCallsRequest,
-  Input,
-  BuiltPromptToLlm,
-  LlmResponse,
-  AgentStepBuildResponseToUser,
-  StateUpdate,
-  Action,
-  AgentStepToolExecutions,
+  sequelize,
+  AgentConfigModel,
+  EnvironmentModel,
+  LanguageModel,
+  BuildPromptToLlmModel,
+  AgentConfigBuildResponseToUserModel,
+  ActionsModel,
+  GoalModel,
+  MemoryModel,
+  AgentConfigMessagesModel,
+  ReceivePromptFromLlmModel,
+  AgentConfigToolCallsRequestModel,
+  ToolParametersModel,
+  PropertiesModel,
+  ToolResultModel,
+  ToolTagsModel,
+  AgentConfigToolExecutionsModel,
+  ToolRegistryModel,
+  ToolsModel,
+  UserRequestModel,
+  AgentStepModel,
+  AgentStepConfigBuildResponseToUserModel,
+  BuiltPromptToLlmModel,
+  ActionModel,
+  InputModel,
+  LlmResponseModel,
+  StateUpdateModel,
+  AgentStepConfigToolExecutionsModel,
+  LlmConfigModel,
+  LlmConfigMessagesModel,
+  MetaDataModel,
+  LlmConfigToolCallsRequestModel,
+  PromptInputModel,
+  PromptOutputModel,
 };

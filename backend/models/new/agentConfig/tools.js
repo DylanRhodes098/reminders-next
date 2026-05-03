@@ -14,6 +14,10 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+agentConfigId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 name: {
 type: DataTypes.STRING,
 allowNull: false,
@@ -21,22 +25,15 @@ validate: {
 notEmpty: true,
 },
 },
-
 description: {
 type: DataTypes.TEXT,
 allowNull: true,
 },
-
 terminal: {
 type: DataTypes.BOOLEAN,
 allowNull: true,
 },
-
 toolRegistryId: {
-type: DataTypes.UUID,
-allowNull: true,
-},
-builtPromptToLlmId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
@@ -44,7 +41,7 @@ promptInputId: {
 type: DataTypes.UUID,
 allowNull: true,
 },
-agentConfigId: {
+builtPromptToLlmId: {
 type: DataTypes.UUID,
 allowNull: true,
 },

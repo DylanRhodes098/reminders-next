@@ -14,17 +14,16 @@ allowNull: false,
 primaryKey: true,
 defaultValue: DataTypes.UUIDV4,
 },
+agentConfigId: {
+type: DataTypes.UUID,
+allowNull: true,
+},
 name: {
 type: DataTypes.STRING,
 allowNull: false,
 validate: {
 notEmpty: true,
 },
-},
-
-agentConfigId: {
-type: DataTypes.UUID,
-allowNull: true,
 },
 createdAt: {
 type: DataTypes.DATE,

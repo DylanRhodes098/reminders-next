@@ -1,5 +1,5 @@
 
-Id {}
+id {}
 
   apiKey {} 
 
@@ -15,7 +15,7 @@ Id {}
 HAS MANY
     generateResponse {
 promptInput
-promptOuput
+promptOutput
   }
 
 
