@@ -77,13 +77,13 @@ export default function Login() {
           duration: 0.8,
           ease: "easeInOut",
         }}
-        className="relative flex flex-col gap-4 items-center justify-center px-4"
+        className="Global authPage"
       >
         
    
-        <div className="backGround h-screen w-screen flex flex-col items-center text-left relative z-10">
-        <Space className="m-12" direction="vertical" size={20}>
-        <Card title="Login" style={{ width: 500 }}>
+        <div className="w-full flex flex-col items-center text-left relative z-10">
+        <Space direction="vertical" size={20}>
+        <Card title="Login" className="authCard glass-panel-strong glass-inset">
         <Form
   name="login"
   labelCol={{ span: 8 }}

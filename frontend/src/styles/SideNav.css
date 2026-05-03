@@ -4,18 +4,18 @@
 
 /* Top SideNav strip only — background, no flex growth */
 .sideNavTopPanel {
-  background-color: #f3f4f6;
+  background: transparent;
   width: 100%;
   transition: background-color 0.2s ease;
 }
 
 .dark .sideNavTopPanel {
-  background-color: #1a1a1a;
+  background: transparent;
 }
 
 /* SideNav2 fills the sidebar column below SideNav (flex parent sets height) */
 .sideNav2Surface {
-  background-color: #f3f4f6;
+  background: transparent;
   width: 100%;
   min-height: 0;
   flex: 1 1 auto;
@@ -26,5 +26,11 @@
 }
 
 .dark .sideNav2Surface {
-  background-color: #1a1a1a;
+  background: transparent;
+}
+
+/* Make Ant Menu blend into the glass surface */
+.sideNavWrapper .ant-menu,
+.sideNav2Surface .ant-menu {
+  background: transparent;
 }

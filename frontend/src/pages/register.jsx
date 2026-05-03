@@ -50,16 +50,16 @@ export default function Register() {
   }
 
   return (
-    <div className="backGround h-screen w-screen flex flex-col items-center text-center">
-           <Space className="m-12" direction="vertical" size={20}>
-           <Card title="Register" style={{ width: 500 }}>
+    <div className="Global authPage text-center">
+           <Space direction="vertical" size={20}>
+           <Card title="Register" className="authCard glass-panel-strong glass-inset">
 
       {/* Error message */}
       {err ? (
         <div
           role="alert"
           aria-live="polite"
-          className=""
+          className="mb-3 text-sm text-red-500"
         >
           {err}
         </div>
@@ -145,7 +145,7 @@ export default function Register() {
 </p>
       <p className="">
         Have an account?{" "}
-        <Link to="/login" className="">
+        <Link to="/login" className="underline underline-offset-4">
           Login
         </Link>
       </p>

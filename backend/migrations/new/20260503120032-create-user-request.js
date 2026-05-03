@@ -1,0 +1,49 @@
+'use-strict';
+
+// Initiate async up function //
+export async function up(queryInterface, Sequelize) {
+
+  // Define queryinterface method //
+  await queryInterface.createTable('user_request', {
+    id: {
+      type: Sequelize.DataTypes.UUID,
+      allowNull: false,
+      primaryKey: true,
+      defaultValue: Sequelize.DataTypes.UUIDV4,
+    },
+
+    agentConfigId: {
+      type: Sequelize.DataTypes.UUID,
+      allowNull: true,
+    },
+
+    buildPromptToLlmId: {
+      type: Sequelize.DataTypes.UUID,
+      allowNull: true,
+    },
+
+    inputId: {
+      type: Sequelize.DataTypes.UUID,
+      allowNull: true,
+    },
+
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.fn('NOW'),
+    },
+
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.fn('NOW'),
+    },
+  });
+}
+
+// Initiate async down function //
+export async function down(queryInterface, Sequelize) {
+
+  // Define queryinterface method //
+  await queryInterface.dropTable('user_request');
+}
