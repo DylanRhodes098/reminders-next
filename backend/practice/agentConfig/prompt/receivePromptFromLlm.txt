@@ -1,0 +1,14 @@
+ID {} 
+
+HAS MANY
+messages {
+  role: ENUM ('system' | 'user' | 'assistant')
+   content: string
+}
+
+HAS MANY 
+actions {
+toolName: string,
+args: ToolArgs = {}
+} 
+

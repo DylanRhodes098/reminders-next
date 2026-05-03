@@ -1,0 +1,11 @@
+id { 
+
+}
+
+   content { 
+      string 
+      }
+
+  source {
+   ENUM "user" | "llm" | "tool"
+    }

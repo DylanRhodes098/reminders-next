@@ -1,0 +1,11 @@
+     id {}
+     
+     type {string}
+
+      description? {
+        string
+      } 
+
+      enum? {
+        string []
+      } 

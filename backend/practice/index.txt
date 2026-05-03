@@ -1,0 +1,167 @@
+--- AGENT ---
+
+agentConfig HASMANY = [
+  goal
+  language
+  toolRegistry
+  userRequest
+  environment
+]
+
+language HASMANY = [
+  buildPromptToLlm
+  receivePromptFromLlm
+  buildResponseToUser
+]
+
+toolRegistry HASMANY = [
+  tools
+]
+
+userRequest HASMANY = [
+  messages
+]
+
+buildPromptToLlm HASMANY = [
+  goals
+  actions
+  memory
+  userRequest
+]
+
+receivePromptFromLlm HASMANY = [
+  messages
+  actions
+  toolCallRequests
+]
+
+buildResponseToUser HASMANY = [
+  messages
+]
+
+tools HASMANY = [
+  parameters
+  tags
+]
+
+
+--- LLM ---
+
+llmConfig HASMANY = [
+  generateResponse
+]
+
+generateResponse HASMANY = [
+  promptInput
+  promptOutput
+]
+
+promptInput HASMANY = [
+  messages
+  tools
+  metadata
+]
+
+promptOutput HASMANY = [
+  messages
+  toolCallRequests
+]
+
+--- AGENT STEP ---
+
+AgentStep HASMANY = [
+  input
+  builtPromptToLlm
+  llmResponse
+  toolExecutions
+  buildResponseToUser
+  stateUpdate
+  terminationDecision
+]
+
+input HASMANY = [
+  userRequest
+  previousToolResults
+  memory
+  goals
+]
+
+userRequest HASMANY = [
+  messages
+]
+
+previousToolResults HASMANY = [
+  toolResult
+]
+
+memory HASMANY = [
+  key
+  value
+]
+
+goals HASMANY = [
+  name
+  description
+  priority
+]
+
+builtPromptToLlm HASMANY = [
+  messages
+  tools
+  metadata
+]
+
+metadata HASMANY = [
+  temperature
+  maxTokens
+  requestId
+]
+
+llmResponse HASMANY = [
+  messages
+  toolCallRequests
+]
+
+toolExecutions HASMANY = [
+  toolCallRequest
+  toolResult
+  success
+  error
+]
+
+toolCallRequest HASMANY = [
+  toolId
+  toolName
+  args
+]
+
+toolResult HASMANY = [
+  data
+  success
+  error
+]
+
+buildResponseToUser HASMANY = [
+  messages
+]
+
+stateUpdate HASMANY = [
+  memoryWrites
+  actions
+]
+
+memoryWrites HASMANY = [
+  content
+  source
+]
+
+actions HASMANY = [
+  type
+  name
+  data
+]
+
+terminationDecision HASMANY = [
+  shouldTerminate
+  reason
+]

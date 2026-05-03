@@ -1,0 +1,6 @@
+id { }
+
+messages { 
+    role: ENUM ('system' | 'user' | 'assistant')
+    context : string 
+}

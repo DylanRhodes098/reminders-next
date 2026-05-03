@@ -1,0 +1,23 @@
+id {}
+
+HAS MANY
+goals {
+  name: string,
+   description: string,
+   priority: number
+}
+
+HAS MANY
+actions {  
+    toolName: string
+   args: ToolArgs = {}
+   }
+
+HAS MANY
+memory {
+    type : ENUM('user', 'assistant', 'environment', 'system')
+    content : string
+    timestamp? : Date
+    metadata? : record <string, unkonw>
+}
+

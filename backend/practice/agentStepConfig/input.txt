@@ -1,0 +1,25 @@
+ id { 
+
+ }
+
+ HAS MANY
+ userRequest? { 
+    messages
+ }
+
+HASMANY
+    previousToolResults? {
+       sucess
+error 
+    } 
+
+    memory { 
+       Memory[] 
+    } 
+
+HASMANY
+    goals? {
+         name: string,
+   description: string,
+   priority: number
+    } 

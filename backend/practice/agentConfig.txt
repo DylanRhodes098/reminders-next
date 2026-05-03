@@ -1,0 +1,53 @@
+
+id {}
+
+HAS MANY
+goal {
+   name: string,
+    description: string,
+    priority: number 
+} 
+
+HAS MANY
+  language {
+buildPromptToLlm(builtByAgent) : goals, actions, memory, userRequest
+receivePromptFromLlm(sentFromLlm) : messages, actions
+  buildResponseToUser(builtByAgent, sentToUser): message
+  }
+
+HAS MANY
+  toolRegistry { 
+  tools
+  tags: string;
+  names: string;
+  includeTerminate: boolean
+  }
+
+HAS MANY
+  userRequest {
+messages
+  }
+
+HAS MANY
+  environment {
+ workingDirectory: string;
+context: JSONB;
+  } 
+
+HAS MANY 
+toolExecutions {
+    toolCallRequest
+    toolResult
+}
+
+  maxIterations { 
+    number;
+  }
+
+  maxParseRetries {
+    number
+  }
+
+  verbose { 
+    boolean;
+  }

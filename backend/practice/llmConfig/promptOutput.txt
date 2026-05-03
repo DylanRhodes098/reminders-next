@@ -1,0 +1,12 @@
+id {}
+
+message {
+    role: ENUM ('system' | 'user' | 'assistant')
+    content : string 
+}
+
+HAS MANY
+toolcallrequest {
+  tool: string;
+  args: JSONB;
+}

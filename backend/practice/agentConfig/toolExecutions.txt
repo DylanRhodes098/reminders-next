@@ -1,0 +1,15 @@
+  id { 
+
+  }
+
+HASMANY
+  toolCallRequest { 
+tool : string 
+args: key : value
+  }
+
+HASMANY
+    toolResult { 
+success : boolean
+erorr : boolean 
+    }

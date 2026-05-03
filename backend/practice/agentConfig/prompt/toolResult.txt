@@ -1,0 +1,11 @@
+id { 
+
+}
+
+sucess { 
+    boolean
+}
+
+error { 
+    boolean 
+}

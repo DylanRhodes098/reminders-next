@@ -1,0 +1,23 @@
+   id {}
+
+   name {
+    string
+   }
+
+    description {
+        string
+    }
+
+HAS MANY
+ parameters {   
+    JSONB
+ }
+
+terminal {
+    boolean 
+}
+
+ HAS MANY
+tags {
+    string[] = []
+}

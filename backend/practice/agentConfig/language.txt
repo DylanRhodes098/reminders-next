@@ -1,0 +1,9 @@
+  
+  id {}
+  
+  HAS MANY
+buildPromptToLlm {goals, actions, memory}
+
+HAS MANY
+receivePromptFromLlm {messages, actions} 
+

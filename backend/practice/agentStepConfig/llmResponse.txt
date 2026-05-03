@@ -1,0 +1,12 @@
+id {}
+
+messages { 
+role: ENUM ('system' | 'user' | 'assistant')
+content : string 
+}
+
+    toolCallRequests { 
+         tool : string
+  args :
+    key : value 
+    }

@@ -1,0 +1,9 @@
+id {}
+
+Role {
+    ENUM ('system' | 'user' | 'assistant')
+}
+
+ content  {
+    string
+ }

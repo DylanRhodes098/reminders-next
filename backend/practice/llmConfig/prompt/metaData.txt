@@ -1,0 +1,15 @@
+     id { 
+        
+     }
+     
+     temperature {
+        number
+     }
+
+  maxTokens {
+    number
+  }
+
+  requestId {
+    string
+  }

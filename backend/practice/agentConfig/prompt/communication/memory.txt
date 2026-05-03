@@ -1,0 +1,17 @@
+
+id {}
+
+ type {
+    ENUM ('user' | 'assistant' | 'environment' | 'system')}
+    
+    content  {
+      string
+      }
+
+    timestamp? {
+      Dat
+      }
+
+    metadata? {
+      JSONB
+      }

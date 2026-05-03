@@ -1,0 +1,51 @@
+id {}
+
+iteration { 
+    number
+}
+
+HASMANY
+  input {
+    userRequest?: UserRequest
+    previousToolResults?: ToolResult[]
+    memory?: Memory[]
+    goals?: Goal[]
+  }
+
+HASMNAY
+  builtPromptToLlm {
+    messages: Message[]
+    tools: ToolDefinition[]
+    metadata: Metadata
+  }
+
+HASMANY
+  llmResponse {
+    messages 
+    toolCallRequests
+  }
+
+HASMANY
+  toolExecutions {
+    toolCallRequest: ToolCallRequest
+    toolResult: ToolResult
+    success: boolean
+    error?: string
+  }[]
+
+HASMANY
+  buildResponseToUser {
+    messages: Message[]
+  }
+
+HASMANY
+  stateUpdate {
+    memoryWrites: Memory[]
+    actions: Action[]
+  }
+
+HASMANY
+  terminationDecision {
+    shouldTerminate: boolean
+    reason?: string
+  }

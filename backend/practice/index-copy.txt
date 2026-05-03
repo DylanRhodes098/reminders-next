@@ -1,0 +1,153 @@
+--- RELATIONSHIP RULES ---
+
+HASONE means:
+Parent.hasOne(Child)
+Child.belongsTo(Parent)
+
+HASMANY means:
+Parent.hasMany(Child)
+Child.belongsTo(Parent)
+
+Fields like name, content, key, value, data, success, error, reason, shouldTerminate are model columns, not relationships.
+
+Use camelCase foreign keys:
+AgentConfig -> agentConfigId
+ToolRegistry -> toolRegistryId
+AgentStep -> agentStepId
+
+Use plural aliases for HASMANY.
+Use singular aliases for HASONE.
+
+--- AGENT ---
+
+agentConfig HASMANY = [
+  goal
+]
+
+agentConfig HASONE = [
+  language
+  toolRegistry
+  userRequest
+  environment
+]
+
+language HASONE = [
+  buildPromptToLlm
+  receivePromptFromLlm
+  buildResponseToUser
+]
+
+toolRegistry HASMANY = [
+  tool
+]
+
+userRequest HASMANY = [
+  message
+]
+
+buildPromptToLlm HASMANY = [
+  goal
+  action
+  memory
+]
+
+buildPromptToLlm HASONE = [
+  userRequest
+]
+
+receivePromptFromLlm HASMANY = [
+  message
+  action
+  toolCallRequest
+]
+
+buildResponseToUser HASMANY = [
+  message
+]
+
+tool HASMANY = [
+  toolParameter
+  tag
+]
+
+--- LLM ---
+
+llmConfig HASONE = [
+  generateResponse
+]
+
+generateResponse HASONE = [
+  promptInput
+  promptOutput
+]
+
+promptInput HASMANY = [
+  message
+  tool
+]
+
+promptInput HASONE = [
+  metadata
+]
+
+promptOutput HASMANY = [
+  message
+  toolCallRequest
+]
+
+--- AGENT STEP ---
+
+agentStep HASONE = [
+  input
+  builtPromptToLlm
+  llmResponse
+  buildResponseToUser
+  stateUpdate
+  terminationDecision
+]
+
+agentStep HASMANY = [
+  toolExecution
+]
+
+input HASONE = [
+  userRequest
+]
+
+input HASMANY = [
+  previousToolResult
+  memory
+  goal
+]
+
+previousToolResult HASONE = [
+  toolResult
+]
+
+builtPromptToLlm HASMANY = [
+  message
+  tool
+]
+
+builtPromptToLlm HASONE = [
+  metadata
+]
+
+llmResponse HASMANY = [
+  message
+  toolCallRequest
+]
+
+toolExecution HASONE = [
+  toolCallRequest
+  toolResult
+]
+
+buildResponseToUser HASMANY = [
+  message
+]
+
+stateUpdate HASMANY = [
+  memoryWrite
+  action
+]

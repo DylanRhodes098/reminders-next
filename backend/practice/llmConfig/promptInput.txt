@@ -1,0 +1,24 @@
+id {}
+
+HAS MANY
+messages {
+     role: ENUM ('system' | 'user' | 'assistant')
+    content: string
+
+}
+
+HAS MANY
+tools {
+   name: string,
+    description: string,
+ parameters: JSONB 
+terminal: boolean 
+tags: string[] = []
+}
+
+HAS MANY
+metadata { 
+     temperature: number;
+  maxTokens: number;
+  requestId: string;
+}

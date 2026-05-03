@@ -1,0 +1,17 @@
+id { 
+
+}
+
+HASMANY
+    memoryWrites { 
+        content: string
+  source: ENUM ("user" | "llm" | "tool")
+    }
+
+HASMANY
+  Action {
+type: ENUM ("tool_call" | "tool_result" | "response")
+  name?: string
+  data?: JSONB
+}
+

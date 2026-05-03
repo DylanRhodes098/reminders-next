@@ -1,0 +1,21 @@
+
+Id {}
+
+  apiKey {} 
+
+  
+  model {} 
+
+  
+  maxTokens {} 
+
+  
+  debug {} 
+
+HAS MANY
+    generateResponse {
+promptInput
+promptOuput
+  }
+
+
