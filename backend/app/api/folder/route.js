@@ -29,6 +29,7 @@ export const runtime = 'nodejs';
   // Get route 
   // »« - »« »« - »« »« - »« //
 export async function GET(req) {
+  
 
   // ‡ - ‡ ‡ - ‡ ‡ - ‡ //
   // Walk 
@@ -64,10 +65,12 @@ export async function GET(req) {
         attributes: ['id', 'name', 'folderId', 'createdAt', 'updatedAt']
       }];
     }
-    
     // < - Fetch all folders from the model file using the provided query options - > // 
     const folders = await Folder.findAll(queryOptions);
+    
+    console.timeEnd("Folder.findAll");
 
+    console.log("GET folders finished", folders.length);
     // < - Return a success message - > //
     return NextResponse.json(folders, {status:200});
 

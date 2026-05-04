@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export function middleware(req) {
+export function proxy(req) {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     const res = new NextResponse(null, { status: 200 });

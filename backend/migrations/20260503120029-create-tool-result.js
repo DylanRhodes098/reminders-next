@@ -4,7 +4,7 @@
 export async function up(queryInterface, Sequelize) {
 
   // Define queryinterface method //
-  await queryInterface.createTable('actions', {
+  await queryInterface.createTable('tool_result', {
     id: {
       type: Sequelize.DataTypes.UUID,
       allowNull: false,
@@ -12,32 +12,27 @@ export async function up(queryInterface, Sequelize) {
       defaultValue: Sequelize.DataTypes.UUIDV4,
     },
 
-    communicationId: {
+    promptId: {
       type: Sequelize.DataTypes.UUID,
       allowNull: true,
-    },
-
-    type: {
-      type: Sequelize.DataTypes.STRING,
-      allowNull: true,
-    },
-
-    name: {
-      type: Sequelize.DataTypes.STRING,
-      allowNull: false,
     },
 
     data: {
-      type: Sequelize.DataTypes.JSONB,
+      type: Sequelize.DataTypes.JSON,
       allowNull: true,
     },
 
-    buildPromptToLlmId: {
-      type: Sequelize.DataTypes.UUID,
+    success: {
+      type: Sequelize.DataTypes.BOOLEAN,
       allowNull: true,
     },
 
-    receivePromptFromLlmId: {
+    error: {
+      type: Sequelize.DataTypes.TEXT,
+      allowNull: true,
+    },
+
+    toolExecutionId: {
       type: Sequelize.DataTypes.UUID,
       allowNull: true,
     },
@@ -60,5 +55,5 @@ export async function up(queryInterface, Sequelize) {
 export async function down(queryInterface, Sequelize) {
 
   // Define queryinterface method //
-  await queryInterface.dropTable('actions');
+  await queryInterface.dropTable('tool_result');
 }

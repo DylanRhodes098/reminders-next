@@ -20,7 +20,25 @@ allowNull: false,
 validate: {
 notEmpty: true,
 },
+
 },
+apiKey: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    },
+    model: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    },
+    maxTokens: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    },
+    debug: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    },
 createdAt: {
 type: DataTypes.DATE,
 allowNull: false,

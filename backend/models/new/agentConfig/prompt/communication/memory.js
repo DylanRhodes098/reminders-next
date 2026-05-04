@@ -23,7 +23,7 @@ type: DataTypes.STRING,
 allowNull: true,
 },
 value: {
-type: DataTypes.JSONB,
+type: DataTypes.JSON,
 allowNull: true,
 },
 buildPromptToLlmId: {

@@ -18,7 +18,7 @@ export async function up(queryInterface, Sequelize) {
     },
 
     schema: {
-      type: Sequelize.DataTypes.JSONB,
+      type: Sequelize.DataTypes.JSON,
       allowNull: true,
     },
 

@@ -273,6 +273,30 @@ if (!ToolTagsModel.associations?.tools)
     as: "tools",
   });
 
+  if (!LlmConfigModel.associations?.promptInput)
+    LlmConfigModel.hasMany(PromptInputModel, {
+      foreignKey: "llmConfigId",
+      as: "promptInput",
+    });
+  
+  if (!PromptInputModel.associations?.llmConfig)
+    PromptInputModel.belongsTo(LlmConfigModel, {
+      foreignKey: "llmConfigId",
+      as: "llmConfig",
+    });
+  
+  if (!LlmConfigModel.associations?.promptOutput)
+    LlmConfigModel.hasMany(PromptOutputModel, {
+      foreignKey: "llmConfigId",
+      as: "promptOutput",
+    });
+  
+  if (!PromptOutputModel.associations?.llmConfig)
+    PromptOutputModel.belongsTo(LlmConfigModel, {
+      foreignKey: "llmConfigId",
+      as: "llmConfig",
+    });
+
 if (!PromptInputModel.associations?.messages)
   PromptInputModel.hasMany(LlmConfigMessagesModel, {
     foreignKey: "promptInputId",

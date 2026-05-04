@@ -28,7 +28,7 @@ export async function up(queryInterface, Sequelize) {
     },
 
     args: {
-      type: Sequelize.DataTypes.JSONB,
+      type: Sequelize.DataTypes.JSON,
       allowNull: true,
     },
 

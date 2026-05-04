@@ -30,7 +30,7 @@ notEmpty: true,
 },
 },
 data: {
-type: DataTypes.JSONB,
+type: DataTypes.JSON,
 allowNull: true,
 },
 buildPromptToLlmId: {

@@ -27,7 +27,7 @@ type: DataTypes.STRING,
 allowNull: true,
 },
 args: {
-type: DataTypes.JSONB,
+type: DataTypes.JSON,
 allowNull: true,
 },
 promptOutputId: {

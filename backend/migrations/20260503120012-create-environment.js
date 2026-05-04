@@ -4,7 +4,7 @@
 export async function up(queryInterface, Sequelize) {
 
   // Define queryinterface method //
-  await queryInterface.createTable('memory', {
+  await queryInterface.createTable('environment', {
     id: {
       type: Sequelize.DataTypes.UUID,
       allowNull: false,
@@ -12,28 +12,23 @@ export async function up(queryInterface, Sequelize) {
       defaultValue: Sequelize.DataTypes.UUIDV4,
     },
 
-    communicationId: {
+    agentConfigId: {
       type: Sequelize.DataTypes.UUID,
       allowNull: true,
     },
 
-    key: {
+    name: {
+      type: Sequelize.DataTypes.STRING,
+      allowNull: false,
+    },
+
+    workingDirectory: {
       type: Sequelize.DataTypes.STRING,
       allowNull: true,
     },
 
-    value: {
-      type: Sequelize.DataTypes.JSONB,
-      allowNull: true,
-    },
-
-    buildPromptToLlmId: {
-      type: Sequelize.DataTypes.UUID,
-      allowNull: true,
-    },
-
-    inputId: {
-      type: Sequelize.DataTypes.UUID,
+    context: {
+      type: Sequelize.DataTypes.JSON,
       allowNull: true,
     },
 
@@ -55,5 +50,5 @@ export async function up(queryInterface, Sequelize) {
 export async function down(queryInterface, Sequelize) {
 
   // Define queryinterface method //
-  await queryInterface.dropTable('memory');
+  await queryInterface.dropTable('environment');
 }

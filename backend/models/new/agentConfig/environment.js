@@ -30,7 +30,7 @@ type: DataTypes.STRING,
 allowNull: true,
 },
 context: {
-type: DataTypes.JSONB,
+type: DataTypes.JSON,
 allowNull: true,
 },
 createdAt: {

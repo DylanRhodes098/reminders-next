@@ -4,7 +4,7 @@
 export async function up(queryInterface, Sequelize) {
 
   // Define queryinterface method //
-  await queryInterface.createTable('properties', {
+  await queryInterface.createTable('action', {
     id: {
       type: Sequelize.DataTypes.UUID,
       allowNull: false,
@@ -12,13 +12,28 @@ export async function up(queryInterface, Sequelize) {
       defaultValue: Sequelize.DataTypes.UUIDV4,
     },
 
-    toolParametersId: {
+    communicationId: {
       type: Sequelize.DataTypes.UUID,
       allowNull: true,
     },
 
-    schema: {
-      type: Sequelize.DataTypes.JSONB,
+    type: {
+      type: Sequelize.DataTypes.STRING,
+      allowNull: true,
+    },
+
+    name: {
+      type: Sequelize.DataTypes.STRING,
+      allowNull: false,
+    },
+
+    data: {
+      type: Sequelize.DataTypes.JSON,
+      allowNull: true,
+    },
+
+    stateUpdateId: {
+      type: Sequelize.DataTypes.UUID,
       allowNull: true,
     },
 
@@ -40,5 +55,5 @@ export async function up(queryInterface, Sequelize) {
 export async function down(queryInterface, Sequelize) {
 
   // Define queryinterface method //
-  await queryInterface.dropTable('properties');
+  await queryInterface.dropTable('action');
 }

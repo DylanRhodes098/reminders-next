@@ -19,7 +19,7 @@ type: DataTypes.UUID,
 allowNull: true,
 },
 data: {
-type: DataTypes.JSONB,
+type: DataTypes.JSON,
 allowNull: true,
 },
 success: {

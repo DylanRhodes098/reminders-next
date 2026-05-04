@@ -4,7 +4,7 @@
 export async function up(queryInterface, Sequelize) {
 
   // Define queryinterface method //
-  await queryInterface.createTable('action', {
+  await queryInterface.createTable('memory', {
     id: {
       type: Sequelize.DataTypes.UUID,
       allowNull: false,
@@ -17,22 +17,22 @@ export async function up(queryInterface, Sequelize) {
       allowNull: true,
     },
 
-    type: {
+    key: {
       type: Sequelize.DataTypes.STRING,
       allowNull: true,
     },
 
-    name: {
-      type: Sequelize.DataTypes.STRING,
-      allowNull: false,
-    },
-
-    data: {
-      type: Sequelize.DataTypes.JSONB,
+    value: {
+      type: Sequelize.DataTypes.JSON,
       allowNull: true,
     },
 
-    stateUpdateId: {
+    buildPromptToLlmId: {
+      type: Sequelize.DataTypes.UUID,
+      allowNull: true,
+    },
+
+    inputId: {
       type: Sequelize.DataTypes.UUID,
       allowNull: true,
     },
@@ -55,5 +55,5 @@ export async function up(queryInterface, Sequelize) {
 export async function down(queryInterface, Sequelize) {
 
   // Define queryinterface method //
-  await queryInterface.dropTable('action');
+  await queryInterface.dropTable('memory');
 }

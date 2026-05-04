@@ -2,6 +2,10 @@ import { z } from "zod";
 
 export const llmConfigCreate = z.object({
   name: z.string().min(1, "Name required"),
+  apiKey: z.string().optional().nullable(),
+  model: z.string().optional().nullable(),
+  maxTokens: z.number().int().optional().nullable(),
+  debug: z.boolean().optional(),
 });
 
 export const llmConfigUpdate = llmConfigCreate.partial();
